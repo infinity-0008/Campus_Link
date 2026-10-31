@@ -1,0 +1,53 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
+@config "../tailwind.config.js";
+@source "./";
+
+:root {
+  color-scheme: light;
+  --campus-red: #e0231c;
+  --campus-ink: #101114;
+  --campus-muted: #70747d;
+  --campus-surface: #ffffff;
+  --campus-page: #f5f5f4;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--campus-page);
+  color: #242429;
+  font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+:focus-visible { outline: 2px solid var(--campus-red); outline-offset: 2px; }
+::selection { background: rgba(224,35,28,.16); }
+
+/* Kage landing remains powered by the supplied ThreeUI page. */
+.shader-frame { isolation: isolate; overflow: hidden; }
+
+.app-scrollbar { scrollbar-width: thin; scrollbar-color: #c9c9c9 transparent; }
+.app-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+.app-scrollbar::-webkit-scrollbar-thumb { background: #c9c9c9; border-radius: 999px; }
+
+.prose-copy { line-height: 1.7; color: #60636a; }
+.form-control {
+  width: 100%; border: 1px solid #dedfe2; border-radius: 11px; background: #fff;
+  padding: 11px 13px; color: #202126; outline: none; transition: border .15s, box-shadow .15s;
+}
+.form-control:focus { border-color: #e0231c; box-shadow: 0 0 0 3px rgba(224,35,28,.10); }
+.form-control:disabled { background: #f5f5f5; color: #858585; }
+.form-label { display:block; margin-bottom:6px; font-size:13px; font-weight:600; color:#3a3b40; }
+.form-error { margin-top:5px; font-size:12px; color:#bd2721; }
+.card-surface { border:1px solid #e8e8e7; background:#fff; border-radius:16px; box-shadow:0 8px 30px rgba(17,24,39,.035); }
+.table-head { background:#f8f8f7; color:#777a82; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+.table-row:hover { background:#fafafa; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+}

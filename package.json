@@ -1,0 +1,29 @@
+{
+  "name": "campuslink",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CampusLink - AI-powered placement and recruitment management platform",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "engines": {
+    "node": ">=20.16.0 <25"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n API,WEB -c red,cyan \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "npm run dev --workspace=@campuslink/server",
+    "dev:client": "npm run dev --workspace=@campuslink/client",
+    "start": "npm run start --workspace=@campuslink/server",
+    "build": "npm run build --workspace=@campuslink/client",
+    "preview": "npm run preview --workspace=@campuslink/client",
+    "test": "npm run test --workspace=@campuslink/server",
+    "test:client": "npm run test --workspace=@campuslink/client",
+    "seed": "npm run seed --workspace=@campuslink/server",
+    "download:model": "npm run download:model --workspace=@campuslink/server",
+    "test:integration": "npm run test:integration --workspace=@campuslink/server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Runtime and logs
+*.log
+logs/
+*.pid
+
+# Build and test output
+dist/
+coverage/
+.nyc_output/
+
+# Local model weights (downloaded during deployment build)
+server/models/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

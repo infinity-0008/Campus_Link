@@ -1,0 +1,43 @@
+export const USER_ROLES = Object.freeze({
+  STUDENT: "student",
+  RECRUITER: "recruiter",
+  ADMIN: "admin",
+});
+
+export const USER_STATUSES = Object.freeze({
+  ACTIVE: "active",
+  PENDING: "pending",
+  SUSPENDED: "suspended",
+});
+
+export const JOB_STATUSES = Object.freeze({
+  DRAFT: "draft",
+  OPEN: "open",
+  CLOSED: "closed",
+});
+
+export const APPLICATION_STATUSES = Object.freeze({
+  APPLIED: "applied",
+  SHORTLISTED: "shortlisted",
+  INTERVIEW_SCHEDULED: "interview_scheduled",
+  SELECTED: "selected",
+  REJECTED: "rejected",
+});
+
+export const APPLICATION_TRANSITIONS = Object.freeze({
+  [APPLICATION_STATUSES.APPLIED]: [
+    APPLICATION_STATUSES.SHORTLISTED,
+    APPLICATION_STATUSES.REJECTED,
+  ],
+  [APPLICATION_STATUSES.SHORTLISTED]: [
+    APPLICATION_STATUSES.INTERVIEW_SCHEDULED,
+    APPLICATION_STATUSES.REJECTED,
+  ],
+  [APPLICATION_STATUSES.INTERVIEW_SCHEDULED]: [
+    APPLICATION_STATUSES.SELECTED,
+    APPLICATION_STATUSES.REJECTED,
+    APPLICATION_STATUSES.SHORTLISTED,
+  ],
+  [APPLICATION_STATUSES.SELECTED]: [],
+  [APPLICATION_STATUSES.REJECTED]: [],
+});
