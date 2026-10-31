@@ -18,7 +18,6 @@ coverage/
 .nyc_output/
 
 # Local model weights (downloaded during deployment build)
-server/models/
 
 # OS/editor
 .DS_Store
