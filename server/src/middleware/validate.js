@@ -5,11 +5,17 @@ import { ApiError } from "../utils/ApiError.js";
  * Parsed values are made available at request.validated.{body, query, params}.
  */
 export function validate(schemas) {
+  // If a Zod object schema is passed directly (e.g. z.object({ body, query, params }))
+  // unwrap its .shape so we can iterate over body/query/params keys.
+  const schemaMap = (schemas && typeof schemas === "object" && typeof schemas.safeParse === "function")
+    ? schemas.shape ?? {}
+    : schemas;
+
   return function validateRequest(request, response, next) {
     const validated = {};
 
     for (const key of ["body", "query", "params"]) {
-      const schema = schemas[key];
+      const schema = schemaMap[key];
       if (!schema) continue;
 
       const result = schema.safeParse(request[key]);

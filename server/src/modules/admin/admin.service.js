@@ -319,3 +319,29 @@ export async function listAuditLogs(filters) {
   const total = result?.total?.[0]?.count ?? 0;
   return { data: result?.data ?? [], meta: buildPaginationMeta({ page, limit, total }) };
 }
+
+export async function createStudentExportCursor() {
+  const cursor = User.aggregate([
+    { $match: { role: USER_ROLES.STUDENT } },
+    { $lookup: { from: "studentprofiles", localField: "_id", foreignField: "user", as: "profile" } },
+    { $unwind: { path: "$profile", preserveNullAndEmptyArrays: true } },
+    { $sort: { createdAt: 1, _id: 1 } },
+    {
+      $project: {
+        name: 1,
+        email: 1,
+        status: 1,
+        createdAt: 1,
+        rollNo: "$profile.rollNo",
+        branch: "$profile.branch",
+        cgpa: "$profile.cgpa",
+        gradYear: "$profile.gradYear",
+        backlogs: "$profile.backlogs",
+        phone: "$profile.phone",
+        skills: "$profile.skills",
+        resumeParseStatus: "$profile.resume.parseStatus",
+      },
+    },
+  ]).cursor();
+  return cursor;
+}
