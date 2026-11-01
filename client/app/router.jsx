@@ -28,10 +28,10 @@ const routesForRole = (role, children) => ({
 });
 
 export const router = createBrowserRouter([
+  { path: "/", element: <Home /> },
   {
     element: <PublicLayout />,
     children: [
-      { path: "/", element: <Home /> },
       { path: "/login", element: <LoginPage /> },
       { path: "/register", element: <RegisterPage /> },
     ],

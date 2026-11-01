@@ -3,7 +3,7 @@ import "@designcodeio/threeui/style.css";
 
 export default function Home() {
   return (
-    <div className="shader-frame h-[calc(100dvh-4rem)] w-full bg-[#05070a]">
+    <div className="shader-frame h-screen w-full bg-[#05070a]">
       <KageLandingPage
         headingFont="onest"
         bodyFont="onest"

@@ -160,6 +160,29 @@ h1,h2,h3{ font-weight:400; margin:0; letter-spacing:-.005em; }
 .nav-link:hover .alt{ transform:none; }
 .nav-link.on{ color:var(--bone); }
 .nav-link.on::after{ content:''; position:absolute; left:0; bottom:0; width:100%; height:1px; background:var(--vermilion); }
+.nav-links{ align-items:center; }
+.nav-btn{
+  position:relative; display:inline-flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+  border-radius:2px; cursor:pointer; text-decoration:none;
+  transition:all .22s ease;
+}
+.nav-btn-outline{
+  padding:7px 15px; border:1px solid rgba(223,231,224,.32); color:var(--bone);
+  background:rgba(255,255,255,.03);
+}
+.nav-btn-outline:hover{
+  border-color:var(--bone); background:rgba(255,255,255,.12); color:#fff;
+  box-shadow:0 0 16px rgba(255,255,255,.12);
+}
+.nav-btn-fill{
+  padding:8px 18px; border:1px solid var(--vermilion); background:var(--vermilion);
+  color:#fff; box-shadow:0 4px 18px rgba(224,35,28,.4);
+}
+.nav-btn-fill:hover{
+  background:#bf1d17; border-color:#bf1d17;
+  box-shadow:0 4px 24px rgba(224,35,28,.65); transform:translateY(-1px);
+}
 .nav-burger{ margin-left:clamp(18px,2.6vw,42px); width:26px; height:16px; position:relative; flex:0 0 auto; }
 .nav-burger i{ position:absolute; right:0; height:1.5px; background:var(--bone); transition:width .45s var(--ease-out), transform .45s var(--ease-out); }
 .nav-burger i:nth-child(1){ top:4px; width:26px; }
@@ -427,10 +450,29 @@ h1,h2,h3{ font-weight:400; margin:0; letter-spacing:-.005em; }
 .les:hover .bar{ transform:scaleX(1); }
 
 /* — chapter IV: eternity */
-.fin{ min-height:100svh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; }
-.fin .eyebrow{ margin-bottom:26px; }
-.fin h2{ font-size:clamp(38px,7.4vw,124px); line-height:.94; letter-spacing:-.03em; text-transform:uppercase; }
-.fin p{ max-width:44ch; margin:26px auto 0; }
+.fin{
+  min-height:100svh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:clamp(80px, 12vh, 140px) var(--pad) clamp(60px, 8vh, 100px);
+  position:relative;
+  width:100%;
+  box-sizing:border-box;
+}
+.fin .eyebrow{ margin-bottom:18px; text-align:center; }
+.fin h2{
+  font-size:clamp(30px, 3.8vw, 54px);
+  line-height:1.12;
+  letter-spacing:-.015em;
+  text-transform:uppercase;
+  max-width:24ch;
+  margin:0 auto;
+  text-align:center;
+}
+.fin p.body-lg{ max-width:64ch; margin:16px auto 0; text-align:center; color:#b4bfb7; }
 .cta{
   position:relative; display:inline-flex; align-items:center; gap:14px; margin-top:44px;
   padding:17px 30px; border:1px solid var(--line); border-radius:100px; overflow:hidden;
@@ -445,54 +487,145 @@ h1,h2,h3{ font-weight:400; margin:0; letter-spacing:-.005em; }
 .cta:hover svg path{ stroke:#05070a; }
 
 /* — footer */
-.signin-card{
-  position:relative; margin:clamp(28px,4.5vh,48px) auto 0; max-width:580px; width:100%;
-  background:linear-gradient(145deg,rgba(224,35,28,.07),transparent 58%),rgba(5,7,10,.9);
-  -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
-  color:var(--bone); border:1px solid var(--line); border-radius:0;
-  padding:clamp(26px,3.4vw,40px); text-align:left;
-  box-shadow:0 30px 70px rgba(0,0,0,.5);
-  font-family:'Onest',system-ui,sans-serif; font-size:15px;
+/* — Matching & Outcomes Showcase */
+.metrics-grid{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:14px;
+  max-width:1080px; width:100%; margin:34px auto 28px;
 }
-.fin .signin-card p{ max-width:none; margin:0; }
-.fin .signin-card .signin-sub{ margin-top:6px; }
-.fin .signin-card .signin-foot{ margin-top:26px; }
-.signin-card h3{ margin:0; font-size:26px; font-weight:500; color:var(--bone); letter-spacing:-.01em; text-transform:none; }
-.signin-sub{ margin:6px 0 0; color:var(--bone-dim); font-size:14px; }
-.signin-card form{ margin-top:24px; display:flex; flex-direction:column; gap:20px; }
-.signin-card fieldset{ border:0; margin:0; padding:0; min-width:0; }
-.signin-card legend{ margin-bottom:10px; font-size:13px; font-weight:400; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); padding:0; }
-.signin-roles{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
-.signin-roles label{
-  position:relative; display:flex; align-items:center; justify-content:center; text-align:center; cursor:pointer;
-  border:1px solid var(--line); border-radius:0; padding:12px 6px; font-size:14px; font-weight:400;
-  color:var(--bone-dim); background:rgba(5,7,10,.7); transition:border-color .3s, background .3s, color .3s;
+.metric-card{
+  background:rgba(8,11,16,.75); border:1px solid rgba(223,231,224,.1);
+  padding:20px 16px; border-radius:2px; text-align:center;
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  transition:border-color .3s, transform .3s;
 }
-.signin-roles label:hover{ border-color:rgba(223,231,224,.45); color:var(--bone); }
-.signin-roles label.is-on{ border-color:var(--vermilion); background:rgba(224,35,28,.16); color:var(--bone); }
-.signin-roles input{ position:absolute; opacity:0; pointer-events:none; }
-.signin-roles label:focus-within{ box-shadow:0 0 0 2px var(--vermilion); }
-.signin-field label{ display:block; margin-bottom:8px; font-size:14px; font-weight:400; color:var(--bone-dim); }
-.signin-field input{
-  width:100%; box-sizing:border-box; padding:12px 14px; border:1px solid var(--line); border-radius:0;
-  font:inherit; font-size:15px; color:var(--bone); background:rgba(5,7,10,.7);
-  transition:border-color .3s, box-shadow .3s;
+.metric-card:hover{
+  border-color:rgba(224,35,28,.4); transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(224,35,28,.12);
 }
-.signin-field input::placeholder{ color:var(--muted); }
-.signin-field input:focus{ outline:none; border-color:var(--vermilion); }
-.signin-field input:focus-visible{ box-shadow:0 0 0 2px rgba(224,35,28,.45); }
-.signin-error{ margin:0; padding:10px 14px; border-radius:0; background:rgba(224,35,28,.12); border:1px solid rgba(224,35,28,.35); color:#ffb4ae; font-size:14px; }
-.signin-submit{
-  width:100%; padding:13px 16px; border:0; border-radius:0; background:var(--vermilion); color:#fff; cursor:pointer;
-  font:inherit; font-size:15px; font-weight:500; letter-spacing:.02em; transition:background .3s, transform .3s var(--ease-out);
+.metric-val{
+  display:block; font-size:clamp(22px,2.4vw,32px); font-weight:700;
+  color:#fff; line-height:1.1; letter-spacing:-.02em;
 }
-.signin-submit:hover{ background:var(--ember); }
-.signin-submit:active{ transform:translateY(1px); }
-.signin-submit:focus-visible{ outline:none; box-shadow:0 0 0 2px var(--bone); }
-.signin-note{ margin:0; text-align:center; font-size:12px; color:var(--muted); }
-.signin-foot{ margin:26px 0 0; text-align:center; color:var(--bone-dim); font-size:14px; }
-.signin-foot a{ color:var(--bone); font-weight:500; text-decoration:none; border-bottom:1px solid var(--vermilion); }
-.signin-foot a:hover{ color:var(--ember); }
+.metric-lbl{
+  display:block; margin-top:6px; font-size:11px;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--muted);
+}
+.matches-grid{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:18px;
+  max-width:1120px; width:100%; margin:0 auto; justify-content:center;
+}
+.match-item{
+  background:linear-gradient(170deg, rgba(14,18,24,.85) 0%, rgba(6,8,12,.92) 100%);
+  border:1px solid rgba(223,231,224,.1); border-radius:2px;
+  padding:20px; text-align:left;
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  transition:all .3s ease; position:relative; overflow:hidden;
+}
+.match-item:hover{
+  border-color:rgba(224,35,28,.45);
+  box-shadow:0 12px 30px rgba(0,0,0,.6), 0 0 24px rgba(224,35,28,.12);
+  transform:translateY(-3px);
+}
+.match-top{
+  display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px;
+}
+.match-co{
+  display:flex; align-items:center; gap:10px;
+}
+.co-icon{
+  width:32px; height:32px; border-radius:2px;
+  display:grid; place-items:center; font-weight:800; font-size:14px; color:#fff;
+}
+.match-co b{
+  display:block; font-size:14px; font-weight:700; color:var(--bone); line-height:1.2;
+}
+.match-co i{
+  display:block; font-style:normal; font-size:11px; color:var(--muted);
+}
+.match-score{
+  display:inline-flex; align-items:center; font-size:10px; font-weight:800;
+  letter-spacing:.06em; text-transform:uppercase;
+  padding:3px 8px; border-radius:2px;
+  background:rgba(224,35,28,.15); color:#ff6b57; border:1px solid rgba(224,35,28,.35);
+}
+.match-student{
+  margin-bottom:14px; border-top:1px solid rgba(223,231,224,.06); padding-top:12px;
+}
+.match-student .s-name{
+  margin:0 0 4px; font-size:13px; font-weight:600; color:var(--bone);
+}
+.match-student .s-name span{
+  color:var(--muted); font-weight:400; font-size:12px;
+}
+.match-student .s-meta{
+  margin:0; font-size:11px; color:#859089;
+}
+.match-student .s-meta b{
+  color:var(--bone);
+}
+.match-badge{
+  display:inline-flex; width:100%; justify-content:center;
+  padding:8px 10px; border-radius:2px; font-size:11px; font-weight:700;
+  letter-spacing:.06em; text-transform:uppercase;
+}
+.match-badge--success{
+  background:rgba(34,197,94,.12); color:#4ade80; border:1px solid rgba(34,197,94,.3);
+}
+.showcase-cta-bar{
+  margin-top:clamp(48px, 8vh, 72px);
+  margin-bottom:24px;
+  text-align:center;
+  width:100%;
+  max-width:680px;
+  margin-left:auto;
+  margin-right:auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.showcase-cta-bar p{
+  margin:0 0 18px;
+  font-size:15px;
+  color:var(--bone-dim);
+  text-align:center;
+}
+.showcase-btn-group{
+  display:inline-flex;
+  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.showcase-btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+  padding:12px 24px; border-radius:2px; text-decoration:none;
+  transition:all .25s ease;
+}
+.showcase-btn-fill{
+  background:var(--vermilion); color:#fff; border:1px solid #ff423a;
+  box-shadow:0 4px 20px rgba(224,35,28,.4);
+}
+.showcase-btn-fill:hover{
+  background:#bf1d17; border-color:#e0231c;
+  box-shadow:0 6px 26px rgba(224,35,28,.65); transform:translateY(-1px);
+}
+.showcase-btn-outline{
+  border:1px solid rgba(223,231,224,.25); color:var(--bone); background:rgba(255,255,255,.03);
+}
+.showcase-btn-outline:hover{
+  border-color:var(--bone); background:rgba(255,255,255,.1); color:#fff;
+  box-shadow:0 0 16px rgba(255,255,255,.1); transform:translateY(-1px);
+}
+@media(max-width:960px){
+  .metrics-grid{ grid-template-columns:repeat(2,1fr); }
+  .matches-grid{ grid-template-columns:repeat(2,1fr); }
+}
+@media(max-width:600px){
+  .metrics-grid{ grid-template-columns:1fr; }
+  .matches-grid{ grid-template-columns:1fr; }
+}
 .foot{ position:relative; padding:clamp(50px,8vh,96px) var(--pad) clamp(26px,4vh,40px);
   border-top:1px solid var(--line-soft); }
 .foot-grid,.foot-base{ position:relative; }
@@ -665,20 +798,15 @@ body[data-layout-curriculum="b"] .les h3{ font-size:clamp(20px,2vw,30px); }
 body[data-layout-curriculum="b"] .les p{ display:block; max-width:34ch; }
 body[data-layout-curriculum="b"] .les .t{ text-align:left; margin-top:auto; }
 
-/* — closing B · gallery: the title hangs vertically on the right while the
-     chapter mark, the last line and the call to action run down the left. */
+/* — closing */
 body[data-layout-closing="b"] .fin{
-  display:grid; grid-template-columns:minmax(260px,.7fr) minmax(0,1.3fr); grid-template-rows:auto auto auto;
-  align-content:center; align-items:end; text-align:left;
-  column-gap:clamp(40px,7vw,120px); row-gap:clamp(16px,2.6vh,30px);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; width:100%;
 }
-body[data-layout-closing="b"] .fin .eyebrow{ grid-column:1; grid-row:1; margin:0; }
+body[data-layout-closing="b"] .fin .eyebrow{ margin:0 0 18px; text-align:center; }
 body[data-layout-closing="b"] .fin h2{
-  grid-column:2; grid-row:1 / 4; align-self:center; justify-self:end;
-  font-size:clamp(52px,6vw,82px); writing-mode:vertical-rl;
+  writing-mode:horizontal-tb; font-size:clamp(30px, 3.8vw, 54px); text-align:center; max-width:24ch; margin:0 auto;
 }
-body[data-layout-closing="b"] .fin p{ grid-column:1; grid-row:2; margin:0; }
-body[data-layout-closing="b"] .fin .cta{ grid-column:1; grid-row:3; justify-self:start; margin-top:4px; }
+body[data-layout-closing="b"] .fin p{ margin:16px auto 0; text-align:center; max-width:64ch; }
 
 /* — footer B · manifesto: the statement leads, the navigation becomes a
      compact ruled index beneath it. */
@@ -913,11 +1041,10 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
   body[data-layout-curriculum="b"] .les:nth-child(n){ grid-column:auto; min-height:0; padding:20px; }
   body[data-layout-curriculum="b"] .les:hover{ padding-left:20px; }
 
-  body[data-layout-closing="b"] .fin{ display:flex; align-items:center; text-align:center; gap:0; }
-  body[data-layout-closing="b"] .fin .eyebrow{ margin:0 0 26px; }
-  body[data-layout-closing="b"] .fin h2{ writing-mode:horizontal-tb; font-size:clamp(38px,7.4vw,124px); }
-  body[data-layout-closing="b"] .fin p{ margin:26px auto 0; }
-  body[data-layout-closing="b"] .fin .cta{ margin-top:40px; }
+  body[data-layout-closing="b"] .fin{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:0; }
+  body[data-layout-closing="b"] .fin .eyebrow{ margin:0 0 18px; }
+  body[data-layout-closing="b"] .fin h2{ writing-mode:horizontal-tb; font-size:clamp(26px,5vw,42px); }
+  body[data-layout-closing="b"] .fin p{ margin:14px auto 0; }
 
   body[data-layout-footer="b"] .foot-grid{ grid-template-columns:1fr; }
   body[data-layout-footer="b"] .foot-brand{ grid-column:auto; grid-template-columns:minmax(0,1fr); row-gap:16px; }
@@ -945,7 +1072,7 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
 </style>
 </head>
 <body data-layout-hero="b" data-layout-story="b" data-layout-gallery="b"
-      data-layout-curriculum="b" data-layout-closing="b" data-layout-footer="b">
+      data-layout-curriculum="b" data-layout-footer="b">
 
 <canvas id="gl" aria-hidden="true"></canvas>
 <div id="vignette"></div>
@@ -983,8 +1110,8 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
     <a class="nav-link" href="#gate" data-cursor><span>Features</span><span class="alt">Overview</span></a>
     <a class="nav-link" href="#pathways" data-cursor><span>Workspaces</span><span class="alt">Roles</span></a>
     <a class="nav-link" href="#lessons" data-cursor><span>Modules</span><span class="alt">Platform</span></a>
-    <a class="nav-link" href="#eternity" data-cursor><span>Sign in</span><span class="alt">Log in</span></a>
-    <a class="nav-link" href="#eternity" data-cursor><span>Get started</span><span class="alt">Sign up</span></a>
+    <a class="nav-btn nav-btn-outline" href="/login" target="_top" data-cursor><span>Sign In</span></a>
+    <a class="nav-btn nav-btn-fill" href="/register" target="_top" data-cursor><span>Get Started</span></a>
   </nav>
   <button class="nav-burger" aria-label="Menu" data-cursor><i></i><i></i></button>
 </header>
@@ -1214,66 +1341,167 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
       <img src="secret-pathways-assets/foreground/png/sakura-branch.webp" alt="" width="1536" height="1024" loading="lazy" decoding="async">
     </span>
   </div>
-  <div class="eyebrow" data-rv="fade">Get started</div>
-  <h2 class="display" data-rv="up">Start your placement cycle.</h2>
-  <p class="body-lg" data-rv="up">Sign in with your campus account or register as a student or recruiter.
-    Access is enforced on the server, so each role sees only its own workspace.</p>
-  <div class="signin-card" data-rv="fade">
-    <h3>Sign in</h3>
-    <p class="signin-sub">Choose your workspace and sign in with your campus account.</p>
-    <form id="signin-form" novalidate>
-      <fieldset>
-        <legend>Sign in as</legend>
-        <div class="signin-roles">
-          <label class="is-on"><input type="radio" name="role" value="student" checked><span>Student</span></label>
-          <label><input type="radio" name="role" value="recruiter"><span>Recruiter</span></label>
-          <label><input type="radio" name="role" value="admin"><span>Placement Admin</span></label>
-        </div>
-      </fieldset>
-      <div class="signin-field">
-        <label for="signin-email">Email</label>
-        <input id="signin-email" name="email" type="email" required autocomplete="email" placeholder="name@college.edu">
-      </div>
-      <div class="signin-field">
-        <label for="signin-password">Password</label>
-        <input id="signin-password" name="password" type="password" required autocomplete="current-password">
-      </div>
-      <p class="signin-error" id="signin-error" role="alert" hidden></p>
-      <button type="submit" class="signin-submit" data-cursor>Sign in</button>
-      <p class="signin-note">Demo mode: any email and password signs you in to the selected workspace.</p>
-    </form>
-    <p class="signin-foot">New here? <a href="/register" target="_top">Create an account</a></p>
+  <div class="eyebrow" data-rv="fade"><span class="dot"></span> Automated matching & placement outcomes</div>
+  <h2 class="display" data-rv="up">Proven Matches. Verified Offers.</h2>
+  <p class="body-lg" data-rv="up">CampusLink's rule engine checks CGPA, backlogs, and skill requirements in real-time, connecting verified candidates to top-tier campus recruiters.</p>
+
+  <!-- Metrics Ribbon -->
+  <div class="metrics-grid" data-rv="up">
+    <div class="metric-card">
+      <b class="metric-val">96.8%</b>
+      <span class="metric-lbl">Eligibility Match Precision</span>
+    </div>
+    <div class="metric-card">
+      <b class="metric-val">420+</b>
+      <span class="metric-lbl">Offers Dispatched</span>
+    </div>
+    <div class="metric-card">
+      <b class="metric-val">&#8377;18.6 LPA</b>
+      <span class="metric-lbl">Average Placed CTC</span>
+    </div>
+    <div class="metric-card">
+      <b class="metric-val">85+</b>
+      <span class="metric-lbl">Corporate Hiring Partners</span>
+    </div>
   </div>
-  <script>
-    (function () {
-      if (window.parent !== window && window.parent.location.pathname === '/login') {
-        document.getElementById('eternity').scrollIntoView();
-      }
-      var form = document.getElementById('signin-form');
-      var error = document.getElementById('signin-error');
-      var homes = { student: '/student/dashboard', recruiter: '/recruiter/dashboard', admin: '/admin/dashboard' };
-      form.querySelectorAll('.signin-roles label').forEach(function (label) {
-        label.querySelector('input').addEventListener('change', function () {
-          form.querySelectorAll('.signin-roles label').forEach(function (l) {
-            l.classList.toggle('is-on', l === label);
-          });
-        });
-      });
-      form.addEventListener('submit', function (event) {
-        event.preventDefault();
-        var email = form.email.value.trim();
-        var password = form.password.value;
-        if (!email || !password) {
-          error.textContent = 'Enter your email and password to continue.';
-          error.hidden = false;
-          return;
-        }
-        var role = form.querySelector('input[name="role"]:checked').value;
-        localStorage.setItem('campuslink.token', 'mock.' + role);
-        goToAuth(homes[role]);
-      });
-    })();
-  </script>
+
+  <!-- Matching Showcase Grid -->
+  <div class="matches-grid" data-rv="up">
+    <!-- Card 1: Google -->
+    <div class="match-item">
+      <div class="match-top">
+        <div class="match-co">
+          <span class="co-icon" style="background:#e0231c;">G</span>
+          <div>
+            <b>Google</b>
+            <i>Software Engineer (Systems)</i>
+          </div>
+        </div>
+        <span class="match-score">98% Match</span>
+      </div>
+      <div class="match-student">
+        <p class="s-name">Aarav Sharma &middot; <span>CSE (2026)</span></p>
+        <p class="s-meta">CGPA: <b>9.3</b> &middot; 0 Backlogs &middot; Cloud, DSA, Go</p>
+      </div>
+      <div class="match-badge match-badge--success">
+        <span>Offer Accepted &middot; &#8377;36.0 LPA</span>
+      </div>
+    </div>
+
+    <!-- Card 2: Microsoft -->
+    <div class="match-item">
+      <div class="match-top">
+        <div class="match-co">
+          <span class="co-icon" style="background:#0078d4;">M</span>
+          <div>
+            <b>Microsoft</b>
+            <i>Software Development Engineer</i>
+          </div>
+        </div>
+        <span class="match-score">96% Match</span>
+      </div>
+      <div class="match-student">
+        <p class="s-name">Sneha Patel &middot; <span>IT (2026)</span></p>
+        <p class="s-meta">CGPA: <b>9.1</b> &middot; 0 Backlogs &middot; Azure, Distributed, React</p>
+      </div>
+      <div class="match-badge match-badge--success">
+        <span>Offer Accepted &middot; &#8377;32.5 LPA</span>
+      </div>
+    </div>
+
+    <!-- Card 3: Amazon -->
+    <div class="match-item">
+      <div class="match-top">
+        <div class="match-co">
+          <span class="co-icon" style="background:#ff9900; color:#111;">A</span>
+          <div>
+            <b>Amazon</b>
+            <i>Applied Scientist (GenAI & ML)</i>
+          </div>
+        </div>
+        <span class="match-score">95% Match</span>
+      </div>
+      <div class="match-student">
+        <p class="s-name">Rohan Verma &middot; <span>AI & DS (2026)</span></p>
+        <p class="s-meta">CGPA: <b>8.9</b> &middot; 0 Backlogs &middot; PyTorch, LLMs, NLP</p>
+      </div>
+      <div class="match-badge match-badge--success">
+        <span>Offer Accepted &middot; &#8377;28.0 LPA</span>
+      </div>
+    </div>
+
+    <!-- Card 4: Atlassian -->
+    <div class="match-item">
+      <div class="match-top">
+        <div class="match-co">
+          <span class="co-icon" style="background:#0052cc;">A</span>
+          <div>
+            <b>Atlassian</b>
+            <i>Product Engineer (Full Stack)</i>
+          </div>
+        </div>
+        <span class="match-score">94% Match</span>
+      </div>
+      <div class="match-student">
+        <p class="s-name">Priya Nair &middot; <span>ECE (2026)</span></p>
+        <p class="s-meta">CGPA: <b>8.8</b> &middot; 0 Backlogs &middot; TypeScript, Microservices</p>
+      </div>
+      <div class="match-badge match-badge--success">
+        <span>Offer Accepted &middot; &#8377;26.5 LPA</span>
+      </div>
+    </div>
+
+    <!-- Card 5: Goldman Sachs -->
+    <div class="match-item">
+      <div class="match-top">
+        <div class="match-co">
+          <span class="co-icon" style="background:#1b4f72;">GS</span>
+          <div>
+            <b>Goldman Sachs</b>
+            <i>Quantitative Analyst</i>
+          </div>
+        </div>
+        <span class="match-score">99% Match</span>
+      </div>
+      <div class="match-student">
+        <p class="s-name">Vikramaditya Rao &middot; <span>M&C (2026)</span></p>
+        <p class="s-meta">CGPA: <b>9.5</b> &middot; 0 Backlogs &middot; Stochastic Math, C++, Stats</p>
+      </div>
+      <div class="match-badge match-badge--success">
+        <span>Offer Accepted &middot; &#8377;24.0 LPA</span>
+      </div>
+    </div>
+
+    <!-- Card 6: Zomato -->
+    <div class="match-item">
+      <div class="match-top">
+        <div class="match-co">
+          <span class="co-icon" style="background:#cb202d;">Z</span>
+          <div>
+            <b>Zomato</b>
+            <i>SDE-1 (Mobile & Core Backend)</i>
+          </div>
+        </div>
+        <span class="match-score">92% Match</span>
+      </div>
+      <div class="match-student">
+        <p class="s-name">Ananya Gupta &middot; <span>CSE (2026)</span></p>
+        <p class="s-meta">CGPA: <b>8.6</b> &middot; 0 Backlogs &middot; Node.js, Redis, Kafka</p>
+      </div>
+      <div class="match-badge match-badge--success">
+        <span>Offer Accepted &middot; &#8377;19.0 LPA</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Showcase Bottom Call to Action -->
+  <div class="showcase-cta-bar" data-rv="fade">
+    <p>Ready to automate eligibility and accelerate campus recruitment?</p>
+    <div class="showcase-btn-group">
+      <a href="/register" target="_top" onclick="goToAuth('/register')" class="showcase-btn showcase-btn-fill" data-cursor>Create Account</a>
+      <a href="/login" target="_top" onclick="goToAuth('/login')" class="showcase-btn showcase-btn-outline" data-cursor>Sign In to Workspace</a>
+    </div>
+  </div>
 </section>
 
 <!-- ============================================================ footer -->
@@ -1303,7 +1531,7 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
       <li><a href="#gate" data-cursor>Features</a></li>
       <li><a href="#pathways" data-cursor>Workspaces</a></li>
       <li><a href="#lessons" data-cursor>Modules</a></li>
-      <li><a href="#eternity" data-cursor>Get started</a></li>
+      <li><a href="#eternity" data-cursor>Outcomes & Matches</a></li>
     </ul></div>
     <div><h4>Modules</h4><ul>
       <li><a href="#lessons" data-cursor>Eligibility engine</a></li>
@@ -4460,7 +4688,7 @@ function wireHeroExit() {
 function wireNav() {
   let last = 0;
   const rail = $('#rail');
-  const names = ['Overview', 'Features', 'Workspaces', 'Modules', 'Get started', 'About CampusLink'];
+  const names = ['Overview', 'Features', 'Workspaces', 'Modules', 'Placement Outcomes', 'About CampusLink'];
   SECS.forEach((s, i) => {
     const b = document.createElement('button');
     b.innerHTML = '<i></i>'; b.title = names[i] || '';
