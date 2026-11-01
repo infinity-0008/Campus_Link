@@ -12,7 +12,7 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     port: 5173,
-    strictPort: true,
+    strictPort: false,
     proxy: {
       "/api": {
         target: process.env.CAMPUSLINK_API_PROXY || "http://localhost:5000",
