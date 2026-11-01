@@ -5,7 +5,6 @@ services:
     plan: free
     region: singapore
     numInstances: 1
-    maxShutdownDelaySeconds: 30
     buildCommand: npm install && npm run download:model --workspace=server
     startCommand: npm run start --workspace=server
     healthCheckPath: /api/health
