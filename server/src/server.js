@@ -4,6 +4,7 @@ import { env } from "./config/env.js";
 import { connectDB, disconnectDB } from "./config/db.js";
 import { logger } from "./utils/logger.js";
 import { warmupEmbeddingPool, shutdownWorkerPools } from "./workers/pool.js";
+import StudentProfile from "./models/StudentProfile.js";
 
 let server;
 let isShuttingDown = false;
@@ -11,6 +12,11 @@ let isShuttingDown = false;
 async function startServer() {
   try {
     await connectDB();
+    // Backfill cgpaSemester for existing profiles if missing
+    await StudentProfile.updateMany({ cgpa: { $ne: null }, cgpaSemester: null, gradYear: 2026 }, { $set: { cgpaSemester: 7 } }).catch(() => undefined);
+    await StudentProfile.updateMany({ cgpa: { $ne: null }, cgpaSemester: null, gradYear: 2027 }, { $set: { cgpaSemester: 5 } }).catch(() => undefined);
+    await StudentProfile.updateMany({ cgpa: { $ne: null }, cgpaSemester: null, gradYear: 2028 }, { $set: { cgpaSemester: 3 } }).catch(() => undefined);
+    await StudentProfile.updateMany({ cgpa: { $ne: null }, cgpaSemester: null }, { $set: { cgpaSemester: 6 } }).catch(() => undefined);
   } catch (error) {
     logger.error({ err: error }, "MongoDB connection failed.");
     if (env.NODE_ENV === "production") {

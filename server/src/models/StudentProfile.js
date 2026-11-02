@@ -91,6 +91,7 @@ const studentProfileSchema = new Schema({
   rollNo: { type: String, trim: true, default: null },
   branch: { type: String, trim: true, default: null },
   cgpa: { type: Number, min: 0, max: 10, default: null },
+  cgpaSemester: { type: Number, min: 1, max: 12, default: null },
   gradYear: { type: Number, min: 1900, max: 2200, default: null },
   backlogs: { type: Number, min: 0, default: 0, validate: Number.isInteger },
   phone: { type: String, trim: true, default: null },

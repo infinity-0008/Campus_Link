@@ -50,6 +50,7 @@ const studentNames = [
 
 const branchCycle = ["CSE", "IT", "ECE", "MECH"];
 const cgpaValues = [8.8, 7.5, 9.1, 6.8, 8.0, 7.2, 8.6, 6.4, 9.3, 7.9, 6.2, 8.4, 7.6, 9.0, 7.1, 8.2, 6.5, 9.4, 7.8, 8.7, 6.9, 7.3, 8.9, 7.7, 8.1];
+const cgpaSemesters = [7, 5, 7, 3, 5, 7, 5, 3, 7, 5, 3, 7, 5, 7, 3, 5, 7, 3, 5, 7, 3, 5, 7, 3, 5];
 const graduationYears = [2026, 2027, 2026, 2028, 2027, 2026, 2027, 2028, 2026, 2027, 2028, 2026, 2027, 2026, 2028, 2027, 2026, 2028, 2027, 2026, 2028, 2027, 2026, 2028, 2027];
 const backlogValues = [0, 0, 0, 1, 0, 0, 1, 2, 0, 0, 2, 0, 1, 0, 1, 0, 2, 0, 0, 1, 0, 1, 0, 2, 0];
 
@@ -251,6 +252,7 @@ async function createStudentProfiles(students) {
       rollNo: `CL${String(2026 + (index % 2)).slice(-2)}${String(index + 1).padStart(4, "0")}`,
       branch: branchCycle[index % branchCycle.length],
       cgpa: cgpaValues[index],
+      cgpaSemester: cgpaSemesters[index],
       gradYear: graduationYears[index],
       backlogs: backlogValues[index],
       phone: null,

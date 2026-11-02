@@ -22,6 +22,7 @@ export const updateStudentProfileSchema = z.object({
     rollNo: nullableText(40),
     branch: nullableText(80),
     cgpa: z.number().min(0).max(10).nullable().optional(),
+    cgpaSemester: z.number().int().min(1).max(12).nullable().optional(),
     gradYear: z.number().int().min(1900).max(2200).nullable().optional(),
     backlogs: z.number().int().min(0).optional(),
     phone: nullableText(30),

@@ -69,11 +69,18 @@ function AcademicReportView({ profile, user, onEdit }) {
               <span className="text-2xl sm:text-3xl font-extrabold text-[#17181b]">{cgpa}</span>
               <span className="text-xs font-medium text-[#888a90]">/ 10.0</span>
             </div>
-            <span className={`mt-2 inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold ${
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold ${
               isDistinction ? "bg-purple-50 text-purple-700" : isFirstClass ? "bg-blue-50 text-blue-700" : "bg-emerald-50 text-emerald-700"
             }`}>
               {isDistinction ? "★ Distinction" : isFirstClass ? "First Class" : "Good Standing"}
-            </span>
+              </span>
+              {profile?.cgpaSemester && (
+                <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-700 ring-1 ring-inset ring-slate-200">
+                  Through Sem {profile.cgpaSemester}
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="p-4 sm:p-5">
@@ -110,6 +117,10 @@ function AcademicReportView({ profile, user, onEdit }) {
               <div>
                 <span className="text-[#888a90] block">Primary Phone</span>
                 <span className="font-semibold text-[#1f2024] text-sm mt-0.5 block">{profile?.phone || "Not specified"}</span>
+              </div>
+              <div>
+                <span className="text-[#888a90] block">CGPA Evaluation Scope</span>
+                <span className="font-semibold text-[#1f2024] text-sm mt-0.5 block">{profile?.cgpaSemester ? `Calculated through Semester ${profile.cgpaSemester}` : "All Completed Terms"}</span>
               </div>
               <div>
                 <span className="text-[#888a90] block">Placement Standing</span>
@@ -222,7 +233,7 @@ export function StudentProfilePage() {
   const q = useQuery({ queryKey: ["student", "profile"], queryFn: studentsApi.me });
   const [isEditing, setIsEditing] = useState(false);
   const { register, control, handleSubmit, reset, formState: { errors, isDirty, isSubmitting } } = useForm({
-    defaultValues: { rollNo: "", branch: "", cgpa: "", gradYear: "", backlogs: 0, phone: "", skillsText: "", projects: [], experience: [] }
+    defaultValues: { rollNo: "", branch: "", cgpa: "", cgpaSemester: "", gradYear: "", backlogs: 0, phone: "", skillsText: "", projects: [], experience: [] }
   });
   const projects = useFieldArray({ control, name: "projects" });
   const experience = useFieldArray({ control, name: "experience" });
@@ -233,6 +244,7 @@ export function StudentProfilePage() {
         rollNo: q.data.rollNo || "",
         branch: q.data.branch || "",
         cgpa: q.data.cgpa ?? "",
+        cgpaSemester: q.data.cgpaSemester ?? "",
         gradYear: q.data.gradYear ?? "",
         backlogs: q.data.backlogs ?? 0,
         phone: q.data.phone || "",
@@ -264,6 +276,7 @@ export function StudentProfilePage() {
       rollNo: values.rollNo || null,
       branch: values.branch || null,
       cgpa: values.cgpa === "" ? null : Number(values.cgpa),
+      cgpaSemester: values.cgpaSemester === "" || values.cgpaSemester == null ? null : Number(values.cgpaSemester),
       gradYear: values.gradYear === "" ? null : Number(values.gradYear),
       backlogs: Number(values.backlogs || 0),
       phone: values.phone || null,
@@ -378,6 +391,7 @@ export function StudentProfilePage() {
                 })}
                 error={errors.cgpa?.message}
               />
+              <Field label="Graded up to semester" type="number" min="1" max="12" placeholder="e.g. 6 or 7" {...register("cgpaSemester")} />
               <Field label="Graduation year" type="number" {...register("gradYear")} />
               <Field label="Backlogs" type="number" min="0" {...register("backlogs")} />
               <Field label="Phone" type="tel" {...register("phone")} />
