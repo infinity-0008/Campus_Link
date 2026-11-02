@@ -3,7 +3,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { ArrowRight, BriefcaseBusiness, CalendarDays, CheckCircle2, CircleAlert, ClipboardList, FileText, GraduationCap, MapPin, Search, Sparkles, UploadCloud, UserRound, X, ExternalLink, Download, RefreshCw, Eye, Clock3, Building2, Filter, SlidersHorizontal } from "lucide-react";
+import { ArrowRight, BriefcaseBusiness, CalendarDays, CheckCircle2, CircleAlert, ClipboardList, FileText, GraduationCap, MapPin, Search, Sparkles, UploadCloud, UserRound, X, ExternalLink, Download, RefreshCw, Eye, Clock3, Building2, Filter, SlidersHorizontal, CheckCircle, Edit3, Printer, ShieldCheck } from "lucide-react";
 import { applicationsApi } from "@/api/applications.api.js";
 import { studentsApi } from "@/api/students.api.js";
 import { jobsApi } from "@/api/jobs.api.js";
@@ -24,20 +24,459 @@ export function StudentDashboard(){
  return <><PageHeader eyebrow="STUDENT WORKSPACE" title={`Welcome${user?.name?`, ${user.name.split(" ")[0]}`:" back"}`} description="Your placement journey, opportunities and next steps in one place." actions={<Button onClick={()=>location.assign("/student/jobs")}><Search className="h-4 w-4"/>Explore jobs</Button>}/>{profileQ.isLoading?<LoadingState/>:profileQ.isError?<ErrorState error={profileQ.error} onRetry={()=>profileQ.refetch()}/>:<><div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><StatCard label="Profile completion" value={`${percentage}%`} hint="Based on required placement fields" icon={UserRound}/><StatCard label="Applications" value={appsQ.data?.meta?.total??apps.length} hint="Your submitted applications" icon={ClipboardList}/><StatCard label="Upcoming interviews" value={interviews.filter(i=>new Date(i.scheduledAt)>=new Date()&&i.status!=="cancelled").length} hint="Scheduled conversations" icon={CalendarDays}/><StatCard label="Recommended jobs" value={jobsQ.data?.meta?.total??recommendations.length} hint="Ranked using your stored profile" icon={Sparkles}/></div><div className="mt-5 grid gap-5 xl:grid-cols-[1.45fr_1fr]"><Card className="p-5 sm:p-6"><div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-wider text-brand-red">Placement readiness</p><h2 className="mt-1 text-lg font-bold">Build a profile recruiters can understand</h2></div><span className="text-2xl font-extrabold">{percentage}%</span></div><div className="mt-5 h-2 overflow-hidden rounded-full bg-[#eeeeed]"><div className="h-full rounded-full bg-brand-red transition-all" style={{width:`${percentage}%`}}/></div><div className="mt-4 grid gap-3 sm:grid-cols-2">{[{label:"Academic details",ok:!!profile?.branch&&profile?.cgpa!=null},{label:"Graduation year",ok:!!profile?.gradYear},{label:"Skills added",ok:!!profile?.skills?.length},{label:"Resume parsed",ok:profile?.resume?.parseStatus==="ok"}].map(item=><div key={item.label} className="flex items-center gap-2 text-xs"><CheckCircle2 className={`h-4 w-4 ${item.ok?"text-emerald-600":"text-[#c4c5c8]"}`}/><span className={item.ok?"text-[#494b51]":"text-[#888a90]"}>{item.label}</span></div>)}</div><div className="mt-6 flex flex-wrap gap-2"><Button variant="dark" onClick={()=>location.assign("/student/profile")}>Complete profile <ArrowRight className="h-4 w-4"/></Button><Button variant="secondary" onClick={()=>location.assign("/student/resume")}>Manage resume</Button></div></Card><Card className="p-5 sm:p-6"><div className="flex items-center justify-between"><h2 className="font-bold">Upcoming interviews</h2><Button variant="ghost" size="sm" onClick={()=>location.assign("/student/interviews")}>View all</Button></div>{interviewsQ.isLoading?<div className="py-8"><LoadingState/></div>:interviews.length===0?<EmptyState title="No interviews scheduled" description="When a recruiter schedules an interview, the details will appear here."/>:<div className="mt-4 space-y-3">{interviews.slice(0,4).map(item=><div key={item._id} className="flex items-start gap-3 rounded-xl bg-[#f8f8f7] p-3"><div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white text-brand-red"><CalendarDays className="h-5 w-5"/></div><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold">{item.job?.title||"Interview"}</p><p className="mt-1 text-xs text-[#777a82]">{formatDateTime(item.scheduledAt)} · {humanize(item.mode)}</p></div><StatusBadge value={item.status}/></div>)}</div>}</Card></div><section className="mt-7"><div className="mb-3 flex items-center justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-brand-red">Picked for your profile</p><h2 className="mt-1 text-lg font-bold">Recommended opportunities</h2></div><Button variant="ghost" size="sm" onClick={()=>location.assign("/student/jobs?tab=recommended")}>See all <ArrowRight className="h-4 w-4"/></Button></div>{jobsQ.isLoading?<LoadingState/>:jobsQ.isError?<ErrorState error={jobsQ.error} onRetry={()=>jobsQ.refetch()}/>:recommendations.length===0?<EmptyState title="No recommendations yet" description="Complete your profile and add a resume to improve matching recommendations." action={<Button onClick={()=>location.assign("/student/profile")}>Update profile</Button>}/>:<div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">{recommendations.map((entry)=>{const job=entry.job||entry;return <Card key={getId(job)} className="p-4 transition hover:-translate-y-0.5 hover:shadow-lift"><div className="flex items-start justify-between gap-2"><span className="grid h-10 w-10 place-items-center rounded-xl bg-[#fdecea] text-brand-red"><Building2 className="h-5 w-5"/></span>{entry.matchScore!=null&&<span className="rounded-full bg-[#f4f4f3] px-2.5 py-1 text-[10px] font-bold">{entry.matchScore}% match</span>}</div><h3 className="mt-4 line-clamp-1 font-bold text-[#202126]">{job.title}</h3><p className="mt-1 text-xs text-[#777a82]">{job.company}</p><div className="mt-3 flex items-center gap-1.5 text-[11px] text-[#777a82]"><MapPin className="h-3.5 w-3.5"/>{job.location}</div><div className="mt-4 flex items-center justify-between"><StatusBadge value={entry.eligibilityResult?.eligible?"eligible":entry.eligibilityResult?"ineligible":job.status}/><Button variant="ghost" size="sm" onClick={()=>location.assign(`/student/jobs/${getId(job)}`)}>View <ArrowRight className="h-3 w-3"/></Button></div></Card>})}</div>}</section></>}</>;
 }
 
-export function StudentProfilePage(){
- const qc=useQueryClient(); const q=useQuery({queryKey:["student","profile"],queryFn:studentsApi.me}); const {register,control,handleSubmit,reset,formState:{errors,isDirty,isSubmitting}}=useForm({defaultValues:{rollNo:"",branch:"",cgpa:"",gradYear:"",backlogs:0,phone:"",skillsText:"",projects:[],experience:[]}});
- const projects=useFieldArray({control,name:"projects"}); const experience=useFieldArray({control,name:"experience"});
- useEffect(()=>{if(q.data)reset({rollNo:q.data.rollNo||"",branch:q.data.branch||"",cgpa:q.data.cgpa??"",gradYear:q.data.gradYear??"",backlogs:q.data.backlogs??0,phone:q.data.phone||"",skillsText:(q.data.skills||[]).join(", "),projects:(q.data.projects||[]).map(p=>({...p,techStackText:(p.techStack||[]).join(", ")})),experience:(q.data.experience||[]).map(e=>({...e,startDate:e.startDate?String(e.startDate).slice(0,10):"",endDate:e.endDate?String(e.endDate).slice(0,10):""}))});},[q.data,reset]);
- const save=async(values)=>{
-  const enteredProjects=(values.projects||[]).filter((p)=>p.title?.trim()||p.description?.trim()||p.techStackText?.trim());
-  if(enteredProjects.some((p)=>!p.title?.trim())){toast.error("Give each project a title, or remove the incomplete entry.");return;}
-  const enteredExperience=(values.experience||[]).filter((e)=>e.company?.trim()||e.role?.trim()||e.description?.trim()||e.startDate||e.endDate);
-  if(enteredExperience.some((e)=>!e.company?.trim()||!e.role?.trim())){toast.error("Each experience entry needs both a company and a role.");return;}
-  const payload={rollNo:values.rollNo||null,branch:values.branch||null,cgpa:values.cgpa===""?null:Number(values.cgpa),gradYear:values.gradYear===""?null:Number(values.gradYear),backlogs:Number(values.backlogs||0),phone:values.phone||null,skills:[...new Set(values.skillsText.split(",").map(v=>v.trim()).filter(Boolean))],projects:enteredProjects.map(p=>({title:p.title.trim(),description:p.description||"",techStack:(p.techStackText||"").split(",").map(v=>v.trim()).filter(Boolean)})),experience:enteredExperience.map(e=>({company:e.company.trim(),role:e.role.trim(),description:e.description||"",startDate:e.startDate||undefined,endDate:e.endDate||undefined}))};
-  await studentsApi.update(payload);await qc.invalidateQueries({queryKey:["student","profile"]});toast.success("Profile saved");
- };
- if(q.isLoading)return <LoadingState/>; if(q.isError)return <ErrorState error={q.error} onRetry={()=>q.refetch()}/>;
- return <><PageHeader eyebrow="YOUR PROFILE" title="My profile" description="Maintain the academic, skill and project information used for eligibility and matching." actions={<Button variant="secondary" onClick={()=>location.assign("/student/resume")}>Manage resume <FileText className="h-4 w-4"/></Button>}/><form onSubmit={handleSubmit(save)} className="space-y-5"><Card className="p-5 sm:p-6"><h2 className="font-bold">Academic information</h2><p className="mt-1 text-xs text-[#777a82]">Keep these details current; recruiters use them to evaluate job eligibility.</p><div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"><Field label="Roll / registration number" {...register("rollNo")}/><Field label="Branch" placeholder="e.g. CSE" {...register("branch")}/><Field label="CGPA" type="number" step="0.01" min="0" max="10" {...register("cgpa",{validate:v=>v===""||v===null||(!isNaN(parseFloat(String(v)))&&parseFloat(String(v))>=0&&parseFloat(String(v))<=10)||"CGPA must be between 0 and 10"})} error={errors.cgpa?.message}/><Field label="Graduation year" type="number" {...register("gradYear")}/><Field label="Backlogs" type="number" min="0" {...register("backlogs")}/><Field label="Phone" type="tel" {...register("phone")}/></div></Card><Card className="p-5 sm:p-6"><h2 className="font-bold">Skills</h2><p className="mt-1 text-xs text-[#777a82]">Separate skills with commas. Resume-extracted skills are shown on the Resume page.</p><div className="mt-4"><TextAreaField label="Your skills" rows={3} placeholder="JavaScript, React, SQL, Python" {...register("skillsText")}/></div></Card><Card className="p-5 sm:p-6"><div className="flex items-center justify-between"><div><h2 className="font-bold">Projects</h2><p className="mt-1 text-xs text-[#777a82]">Add projects that demonstrate your practical skills.</p></div><Button variant="secondary" size="sm" onClick={()=>projects.append({title:"",description:"",techStackText:""})}>Add project</Button></div><div className="mt-4 space-y-4">{projects.fields.map((field,index)=><div key={field.id} className="rounded-xl border border-[#ededec] p-4"><div className="mb-3 flex items-center justify-between"><p className="text-xs font-bold text-[#55575e]">Project {index+1}</p><Button variant="ghost" size="sm" onClick={()=>projects.remove(index)}><X className="h-4 w-4"/>Remove</Button></div><div className="grid gap-3 sm:grid-cols-2"><Field label="Project title" {...register(`projects.${index}.title`)} /><Field label="Technology stack (comma separated)" {...register(`projects.${index}.techStackText`)} /><div className="sm:col-span-2"><TextAreaField label="Description" rows={2} {...register(`projects.${index}.description`)}/></div></div></div>)}{projects.fields.length===0&&<p className="rounded-xl bg-[#f8f8f7] px-4 py-5 text-center text-xs text-[#888a90]">No projects added yet. Add a project when you are ready.</p>}</div></Card><Card className="p-5 sm:p-6"><div className="flex items-center justify-between"><div><h2 className="font-bold">Experience</h2><p className="mt-1 text-xs text-[#777a82]">Internships, part-time work or relevant experience.</p></div><Button variant="secondary" size="sm" onClick={()=>experience.append({company:"",role:"",description:"",startDate:"",endDate:""})}>Add experience</Button></div><div className="mt-4 space-y-4">{experience.fields.map((field,index)=><div key={field.id} className="rounded-xl border border-[#ededec] p-4"><div className="mb-3 flex items-center justify-between"><p className="text-xs font-bold text-[#55575e]">Experience {index+1}</p><Button variant="ghost" size="sm" onClick={()=>experience.remove(index)}><X className="h-4 w-4"/>Remove</Button></div><div className="grid gap-3 sm:grid-cols-2"><Field label="Company" {...register(`experience.${index}.company`)}/><Field label="Role" {...register(`experience.${index}.role`)}/><Field label="Start date" type="date" {...register(`experience.${index}.startDate`)}/><Field label="End date" type="date" {...register(`experience.${index}.endDate`)}/><div className="sm:col-span-2"><TextAreaField label="Description" rows={2} {...register(`experience.${index}.description`)}/></div></div></div>)}{experience.fields.length===0&&<p className="rounded-xl bg-[#f8f8f7] px-4 py-5 text-center text-xs text-[#888a90]">No experience added yet.</p>}</div></Card><div className="flex flex-wrap items-center justify-between gap-3"><p className="text-xs text-[#888a90]">{isDirty?"You have unsaved changes.":"Your saved profile is up to date."}</p><Button type="submit" loading={isSubmitting}>Save profile</Button></div></form></>;
+function AcademicReportView({ profile, user, onEdit }) {
+  const cgpa = profile?.cgpa != null ? Number(profile.cgpa).toFixed(2) : "N/A";
+  const numCgpa = profile?.cgpa != null ? Number(profile.cgpa) : 0;
+  const isDistinction = numCgpa >= 8.5;
+  const isFirstClass = numCgpa >= 7.0 && numCgpa < 8.5;
+  const isEligibleGeneral = numCgpa >= 6.0 && Number(profile?.backlogs || 0) === 0;
+
+  return (
+    <div className="space-y-6">
+      <Card className="overflow-hidden border border-[#e5e5e4] shadow-sm">
+        <div className="bg-gradient-to-r from-[#17181c] via-[#22242a] to-[#17181c] p-6 text-white sm:p-7">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-brand-red font-bold text-white shadow-md text-xl">
+                {user?.name ? user.name.split(" ").map(n => n[0]).slice(0, 2).join("") : "ST"}
+              </div>
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="text-xl font-bold tracking-tight text-white sm:text-2xl">{user?.name || "Student"}</h2>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-500/30">
+                    <CheckCircle className="h-3 w-3" /> Placement Registered
+                  </span>
+                </div>
+                <p className="mt-1 text-xs text-[#a0a3aa]">{user?.email} · Roll No: <span className="font-mono font-medium text-white">{profile?.rollNo || "Not assigned"}</span></p>
+                <p className="mt-2 text-xs text-[#7d818a]">Official CampusLink Academic & Placement Verification Dossier</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="secondary" size="sm" onClick={onEdit} className="border-white/20 bg-white/10 text-white hover:bg-white/20">
+                <Edit3 className="h-3.5 w-3.5" /> Edit details
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => window.print()} className="text-[#c4c6cb] hover:bg-white/10 hover:text-white">
+                <Printer className="h-3.5 w-3.5" /> Print report
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 divide-x divide-y sm:grid-cols-4 sm:divide-y-0 divide-[#f0f0ef] bg-[#fafaf9] border-b border-[#ededec]">
+          <div className="p-4 sm:p-5">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#777a82]">Cumulative GPA</span>
+            <div className="mt-1 flex items-baseline gap-1.5">
+              <span className="text-2xl sm:text-3xl font-extrabold text-[#17181b]">{cgpa}</span>
+              <span className="text-xs font-medium text-[#888a90]">/ 10.0</span>
+            </div>
+            <span className={`mt-2 inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold ${
+              isDistinction ? "bg-purple-50 text-purple-700" : isFirstClass ? "bg-blue-50 text-blue-700" : "bg-emerald-50 text-emerald-700"
+            }`}>
+              {isDistinction ? "★ Distinction" : isFirstClass ? "First Class" : "Good Standing"}
+            </span>
+          </div>
+
+          <div className="p-4 sm:p-5">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#777a82]">Department / Branch</span>
+            <div className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#17181b]">{profile?.branch || "—"}</div>
+            <p className="mt-2 text-[11px] font-medium text-[#777a82]">Engineering & Technology</p>
+          </div>
+
+          <div className="p-4 sm:p-5">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#777a82]">Graduation Batch</span>
+            <div className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#17181b]">{profile?.gradYear || "—"}</div>
+            <p className="mt-2 text-[11px] font-medium text-[#777a82]">Class of {profile?.gradYear || "Upcoming"}</p>
+          </div>
+
+          <div className="p-4 sm:p-5">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#777a82]">Active Backlogs</span>
+            <div className={`mt-1 text-2xl sm:text-3xl font-extrabold ${Number(profile?.backlogs || 0) === 0 ? "text-emerald-600" : "text-amber-600"}`}>
+              {profile?.backlogs ?? 0}
+            </div>
+            <p className="mt-2 text-[11px] font-medium text-[#777a82]">
+              {Number(profile?.backlogs || 0) === 0 ? "✓ Clear Record" : "Clearance required"}
+            </p>
+          </div>
+        </div>
+
+        <div className="p-5 sm:p-6 space-y-6 bg-white">
+          <div>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#777a82]">Institutional & Contact Information</h3>
+            <div className="mt-3 grid gap-3 sm:grid-cols-3 rounded-xl border border-[#ededec] bg-[#fafaf9] p-4 text-xs">
+              <div>
+                <span className="text-[#888a90] block">Roll / Registration Number</span>
+                <span className="font-mono font-bold text-[#1f2024] text-sm mt-0.5 block">{profile?.rollNo || "Not specified"}</span>
+              </div>
+              <div>
+                <span className="text-[#888a90] block">Primary Phone</span>
+                <span className="font-semibold text-[#1f2024] text-sm mt-0.5 block">{profile?.phone || "Not specified"}</span>
+              </div>
+              <div>
+                <span className="text-[#888a90] block">Placement Standing</span>
+                <span className={`inline-flex items-center gap-1 font-bold text-xs mt-1 ${isEligibleGeneral ? "text-emerald-700" : "text-amber-700"}`}>
+                  <ShieldCheck className="h-3.5 w-3.5" /> {isEligibleGeneral ? "General Drive Eligible" : "Subject to recruiter criteria"}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#777a82]">Skills & Technical Competencies</h3>
+              <span className="text-xs text-[#888a90]">{(profile?.skills || []).length} registered skills</span>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {(profile?.skills || []).length > 0 ? (
+                profile.skills.map((skill) => (
+                  <span key={skill} className="rounded-xl border border-[#f0dedd] bg-[#fff5f5] px-3 py-1.5 text-xs font-bold text-[#a92620]">
+                    {skill}
+                  </span>
+                ))
+              ) : (
+                <p className="text-xs italic text-[#96989d]">No skills added yet.</p>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#777a82]">Projects Portfolio</h3>
+              <span className="text-xs text-[#888a90]">{(profile?.projects || []).length} projects</span>
+            </div>
+            <div className="mt-3 space-y-3">
+              {(profile?.projects || []).length > 0 ? (
+                profile.projects.map((proj, idx) => (
+                  <div key={proj._id || idx} className="rounded-xl border border-[#ededec] p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h4 className="font-bold text-sm text-[#1e2025]">{proj.title}</h4>
+                      <div className="flex flex-wrap gap-1">
+                        {(proj.techStack || []).map((t) => (
+                          <span key={t} className="rounded-md bg-[#f2f2f1] px-2 py-0.5 text-[10px] font-semibold text-[#575960]">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    {proj.description && <p className="mt-2 text-xs text-[#63656c] leading-relaxed">{proj.description}</p>}
+                  </div>
+                ))
+              ) : (
+                <div className="rounded-xl bg-[#f8f8f7] p-4 text-center text-xs text-[#888a90]">
+                  No projects recorded yet.
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#777a82]">Work Experience & Internships</h3>
+              <span className="text-xs text-[#888a90]">{(profile?.experience || []).length} recorded entries</span>
+            </div>
+            <div className="mt-3 space-y-3">
+              {(profile?.experience || []).length > 0 ? (
+                profile.experience.map((exp, idx) => (
+                  <div key={exp._id || idx} className="rounded-xl border border-[#ededec] p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <h4 className="font-bold text-sm text-[#1e2025]">{exp.role}</h4>
+                        <p className="text-xs text-[#63656c]">{exp.company}</p>
+                      </div>
+                      <span className="text-[11px] text-[#888a90]">
+                        {exp.startDate ? formatDate(exp.startDate) : ""} {exp.endDate ? `— ${formatDate(exp.endDate)}` : exp.startDate ? "— Present" : ""}
+                      </span>
+                    </div>
+                    {exp.description && <p className="mt-2 text-xs text-[#63656c] leading-relaxed">{exp.description}</p>}
+                  </div>
+                ))
+              ) : (
+                <div className="rounded-xl bg-[#f8f8f7] p-4 text-center text-xs text-[#888a90]">
+                  No internships or work experience recorded yet.
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded-xl border border-[#ededec] bg-[#f8f8f7] p-4">
+            <div className="flex items-center gap-3">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white text-brand-red shadow-xs">
+                <GraduationCap className="h-5 w-5" />
+              </span>
+              <p className="text-xs text-[#5f6168]">
+                Need to update your CGPA, semester results, skills or experience?
+              </p>
+            </div>
+            <Button size="sm" onClick={onEdit} className="whitespace-nowrap">
+              <Edit3 className="h-3.5 w-3.5" /> Update academic profile
+            </Button>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+export function StudentProfilePage() {
+  const qc = useQueryClient();
+  const { user } = useAuth();
+  const q = useQuery({ queryKey: ["student", "profile"], queryFn: studentsApi.me });
+  const [isEditing, setIsEditing] = useState(false);
+  const { register, control, handleSubmit, reset, formState: { errors, isDirty, isSubmitting } } = useForm({
+    defaultValues: { rollNo: "", branch: "", cgpa: "", gradYear: "", backlogs: 0, phone: "", skillsText: "", projects: [], experience: [] }
+  });
+  const projects = useFieldArray({ control, name: "projects" });
+  const experience = useFieldArray({ control, name: "experience" });
+
+  useEffect(() => {
+    if (q.data) {
+      reset({
+        rollNo: q.data.rollNo || "",
+        branch: q.data.branch || "",
+        cgpa: q.data.cgpa ?? "",
+        gradYear: q.data.gradYear ?? "",
+        backlogs: q.data.backlogs ?? 0,
+        phone: q.data.phone || "",
+        skillsText: (q.data.skills || []).join(", "),
+        projects: (q.data.projects || []).map(p => ({ ...p, techStackText: (p.techStack || []).join(", ") })),
+        experience: (q.data.experience || []).map(e => ({
+          ...e,
+          startDate: e.startDate ? String(e.startDate).slice(0, 10) : "",
+          endDate: e.endDate ? String(e.endDate).slice(0, 10) : ""
+        }))
+      });
+    }
+  }, [q.data, reset]);
+
+  const hasAcademicDetails = Boolean(q.data?.branch || q.data?.cgpa != null || q.data?.rollNo || q.data?.gradYear);
+
+  const save = async (values) => {
+    const enteredProjects = (values.projects || []).filter(p => p.title?.trim() || p.description?.trim() || p.techStackText?.trim());
+    if (enteredProjects.some(p => !p.title?.trim())) {
+      toast.error("Give each project a title, or remove the incomplete entry.");
+      return;
+    }
+    const enteredExperience = (values.experience || []).filter(e => e.company?.trim() || e.role?.trim() || e.description?.trim() || e.startDate || e.endDate);
+    if (enteredExperience.some(e => !e.company?.trim() || !e.role?.trim())) {
+      toast.error("Each experience entry needs both a company and a role.");
+      return;
+    }
+    const payload = {
+      rollNo: values.rollNo || null,
+      branch: values.branch || null,
+      cgpa: values.cgpa === "" ? null : Number(values.cgpa),
+      gradYear: values.gradYear === "" ? null : Number(values.gradYear),
+      backlogs: Number(values.backlogs || 0),
+      phone: values.phone || null,
+      skills: [...new Set(values.skillsText.split(",").map(v => v.trim()).filter(Boolean))],
+      projects: enteredProjects.map(p => ({
+        title: p.title.trim(),
+        description: p.description || "",
+        techStack: (p.techStackText || "").split(",").map(v => v.trim()).filter(Boolean)
+      })),
+      experience: enteredExperience.map(e => ({
+        company: e.company.trim(),
+        role: e.role.trim(),
+        description: e.description || "",
+        startDate: e.startDate || undefined,
+        endDate: e.endDate || undefined
+      }))
+    };
+    await studentsApi.update(payload);
+    await qc.invalidateQueries({ queryKey: ["student", "profile"] });
+    toast.success("Profile saved");
+    setIsEditing(false);
+  };
+
+  if (q.isLoading) return <LoadingState />;
+  if (q.isError) return <ErrorState error={q.error} onRetry={() => q.refetch()} />;
+
+  return (
+    <>
+      <PageHeader
+        eyebrow="YOUR PROFILE"
+        title={hasAcademicDetails && !isEditing ? "Academic Profile & Report" : "Edit Academic Profile"}
+        description={
+          hasAcademicDetails && !isEditing
+            ? "Official verification summary and student placement dossier."
+            : "Maintain the academic, skill and project information used for eligibility and matching."
+        }
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            {hasAcademicDetails && (
+              <Button variant={isEditing ? "dark" : "secondary"} onClick={() => setIsEditing(!isEditing)}>
+                <Edit3 className="h-4 w-4" /> {isEditing ? "View report" : "Edit profile"}
+              </Button>
+            )}
+            <Button variant="secondary" onClick={() => location.assign("/student/resume")}>
+              Manage resume <FileText className="h-4 w-4" />
+            </Button>
+          </div>
+        }
+      />
+
+      {hasAcademicDetails && (
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#ededec] bg-white p-2 sm:p-2.5">
+          <div className="flex gap-1.5">
+            <button
+              type="button"
+              onClick={() => setIsEditing(false)}
+              className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                !isEditing ? "bg-[#101114] text-white shadow-xs" : "bg-transparent text-[#686a70] hover:bg-[#f2f2f1]"
+              }`}
+            >
+              Academic Report View
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsEditing(true)}
+              className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                isEditing ? "bg-[#101114] text-white shadow-xs" : "bg-transparent text-[#686a70] hover:bg-[#f2f2f1]"
+              }`}
+            >
+              Edit Information
+            </button>
+          </div>
+          {isEditing && (
+            <Button variant="ghost" size="sm" onClick={() => setIsEditing(false)} className="text-xs">
+              Cancel & return to report
+            </Button>
+          )}
+        </div>
+      )}
+
+      {hasAcademicDetails && !isEditing ? (
+        <AcademicReportView profile={q.data} user={user} onEdit={() => setIsEditing(true)} />
+      ) : (
+        <form onSubmit={handleSubmit(save)} className="space-y-5">
+          <Card className="p-5 sm:p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="font-bold">Academic information</h2>
+                <p className="mt-1 text-xs text-[#777a82]">Keep these details current; recruiters use them to evaluate job eligibility.</p>
+              </div>
+              {hasAcademicDetails && (
+                <Button variant="ghost" size="sm" onClick={() => setIsEditing(false)}>
+                  View Report
+                </Button>
+              )}
+            </div>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <Field label="Roll / registration number" {...register("rollNo")} />
+              <Field label="Branch" placeholder="e.g. CSE" {...register("branch")} />
+              <Field
+                label="CGPA"
+                type="number"
+                step="0.01"
+                min="0"
+                max="10"
+                {...register("cgpa", {
+                  validate: v =>
+                    v === "" ||
+                    v === null ||
+                    (!isNaN(parseFloat(String(v))) && parseFloat(String(v)) >= 0 && parseFloat(String(v)) <= 10) ||
+                    "CGPA must be between 0 and 10"
+                })}
+                error={errors.cgpa?.message}
+              />
+              <Field label="Graduation year" type="number" {...register("gradYear")} />
+              <Field label="Backlogs" type="number" min="0" {...register("backlogs")} />
+              <Field label="Phone" type="tel" {...register("phone")} />
+            </div>
+          </Card>
+          <Card className="p-5 sm:p-6">
+            <h2 className="font-bold">Skills</h2>
+            <p className="mt-1 text-xs text-[#777a82]">Separate skills with commas. Resume-extracted skills are shown on the Resume page.</p>
+            <div className="mt-4">
+              <TextAreaField label="Your skills" rows={3} placeholder="JavaScript, React, SQL, Python" {...register("skillsText")} />
+            </div>
+          </Card>
+          <Card className="p-5 sm:p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="font-bold">Projects</h2>
+                <p className="mt-1 text-xs text-[#777a82]">Add projects that demonstrate your practical skills.</p>
+              </div>
+              <Button variant="secondary" size="sm" onClick={() => projects.append({ title: "", description: "", techStackText: "" })}>
+                Add project
+              </Button>
+            </div>
+            <div className="mt-4 space-y-4">
+              {projects.fields.map((field, index) => (
+                <div key={field.id} className="rounded-xl border border-[#ededec] p-4">
+                  <div className="mb-3 flex items-center justify-between">
+                    <p className="text-xs font-bold text-[#55575e]">Project {index + 1}</p>
+                    <Button variant="ghost" size="sm" onClick={() => projects.remove(index)}>
+                      <X className="h-4 w-4" />Remove
+                    </Button>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <Field label="Project title" {...register(`projects.${index}.title`)} />
+                    <Field label="Technology stack (comma separated)" {...register(`projects.${index}.techStackText`)} />
+                    <div className="sm:col-span-2">
+                      <TextAreaField label="Description" rows={2} {...register(`projects.${index}.description`)} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {projects.fields.length === 0 && (
+                <p className="rounded-xl bg-[#f8f8f7] px-4 py-5 text-center text-xs text-[#888a90]">
+                  No projects added yet. Add a project when you are ready.
+                </p>
+              )}
+            </div>
+          </Card>
+          <Card className="p-5 sm:p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="font-bold">Experience</h2>
+                <p className="mt-1 text-xs text-[#777a82]">Internships, part-time work or relevant experience.</p>
+              </div>
+              <Button variant="secondary" size="sm" onClick={() => experience.append({ company: "", role: "", description: "", startDate: "", endDate: "" })}>
+                Add experience
+              </Button>
+            </div>
+            <div className="mt-4 space-y-4">
+              {experience.fields.map((field, index) => (
+                <div key={field.id} className="rounded-xl border border-[#ededec] p-4">
+                  <div className="mb-3 flex items-center justify-between">
+                    <p className="text-xs font-bold text-[#55575e]">Experience {index + 1}</p>
+                    <Button variant="ghost" size="sm" onClick={() => experience.remove(index)}>
+                      <X className="h-4 w-4" />Remove
+                    </Button>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <Field label="Company" {...register(`experience.${index}.company`)} />
+                    <Field label="Role" {...register(`experience.${index}.role`)} />
+                    <Field label="Start date" type="date" {...register(`experience.${index}.startDate`)} />
+                    <Field label="End date" type="date" {...register(`experience.${index}.endDate`)} />
+                    <div className="sm:col-span-2">
+                      <TextAreaField label="Description" rows={2} {...register(`experience.${index}.description`)} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {experience.fields.length === 0 && (
+                <p className="rounded-xl bg-[#f8f8f7] px-4 py-5 text-center text-xs text-[#888a90]">
+                  No experience added yet.
+                </p>
+              )}
+            </div>
+          </Card>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-xs text-[#888a90]">{isDirty ? "You have unsaved changes." : "Your saved profile is up to date."}</p>
+            <div className="flex gap-2">
+              {hasAcademicDetails && (
+                <Button variant="secondary" onClick={() => setIsEditing(false)}>
+                  Cancel
+                </Button>
+              )}
+              <Button type="submit" loading={isSubmitting}>Save profile</Button>
+            </div>
+          </div>
+        </form>
+      )}
+    </>
+  );
 }
 
 export function StudentResumePage(){

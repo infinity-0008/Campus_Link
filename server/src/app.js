@@ -46,7 +46,7 @@ app.use(helmet());
 app.use(cors({
   origin(origin, callback) {
     // Requests without an Origin header are server-to-server tools such as Postman.
-    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    if (!origin || allowedOrigins.includes("*") || allowedOrigins.includes(origin)) return callback(null, true);
     return callback(new ApiError(403, "CORS_ORIGIN_DENIED", "Origin is not allowed by CORS."));
   },
   credentials: true,
