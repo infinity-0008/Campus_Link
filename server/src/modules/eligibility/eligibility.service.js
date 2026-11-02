@@ -1,6 +1,6 @@
 import { JOB_STATUSES } from "../../config/constants.js";
 
-function normalizeBranch(value) {
+function normalize(value) {
   return String(value ?? "").trim().toLowerCase().replace(/\s+/g, " ");
 }
 
@@ -11,18 +11,40 @@ function normalizeBranch(value) {
 export function evaluateEligibility({ studentProfile, job, now = new Date() }) {
   const failures = [];
   const rules = job?.eligibility ?? {};
+
+  const allowedCourses = Array.isArray(rules.courses) ? rules.courses : [];
+  const actualCourse = studentProfile?.course ?? null;
+
+  if (allowedCourses.length > 0) {
+    const allowed = new Set(allowedCourses.map(normalize));
+    if (!actualCourse || !allowed.has(normalize(actualCourse))) {
+      failures.push({
+        rule: "course",
+        required: allowedCourses,
+        actual: actualCourse,
+        message: actualCourse
+          ? `Degree program ${actualCourse} is not eligible for this job.`
+          : `A degree/course from (${allowedCourses.join(", ")}) is required, but your profile has no course set.`,
+      });
+    }
+  }
+
   const allowedBranches = Array.isArray(rules.branches) ? rules.branches : [];
   const actualBranch = studentProfile?.branch ?? null;
+  const actualSpec = studentProfile?.specialization ?? null;
 
   if (allowedBranches.length > 0) {
-    const allowed = new Set(allowedBranches.map(normalizeBranch));
-    if (!actualBranch || !allowed.has(normalizeBranch(actualBranch))) {
+    const allowed = new Set(allowedBranches.map(normalize));
+    const branchMatch = actualBranch && allowed.has(normalize(actualBranch));
+    const specMatch = actualSpec && allowed.has(normalize(actualSpec));
+
+    if (!branchMatch && !specMatch) {
       failures.push({
         rule: "branch",
         required: allowedBranches,
-        actual: actualBranch,
-        message: actualBranch
-          ? `Branch ${actualBranch} is not eligible for this job.`
+        actual: actualBranch || actualSpec,
+        message: actualBranch || actualSpec
+          ? `Branch/Specialization ${actualSpec || actualBranch} is not eligible for this job.`
           : `A branch from the allowed list (${allowedBranches.join(", ")}) is required, but your profile has no branch set.`,
       });
     }

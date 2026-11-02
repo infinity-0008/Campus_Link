@@ -17,6 +17,11 @@ async function startServer() {
     await StudentProfile.updateMany({ cgpa: { $ne: null }, cgpaSemester: null, gradYear: 2027 }, { $set: { cgpaSemester: 5 } }).catch(() => undefined);
     await StudentProfile.updateMany({ cgpa: { $ne: null }, cgpaSemester: null, gradYear: 2028 }, { $set: { cgpaSemester: 3 } }).catch(() => undefined);
     await StudentProfile.updateMany({ cgpa: { $ne: null }, cgpaSemester: null }, { $set: { cgpaSemester: 6 } }).catch(() => undefined);
+    // Backfill course and specialization for existing profiles if missing
+    await StudentProfile.updateMany({ course: null, branch: { $ne: null } }, [
+      { $set: { course: "B.Tech", specialization: "$branch" } }
+    ]).catch(() => undefined);
+    await StudentProfile.updateMany({ course: null }, { $set: { course: "B.Tech", specialization: "Computer Science & Engineering" } }).catch(() => undefined);
   } catch (error) {
     logger.error({ err: error }, "MongoDB connection failed.");
     if (env.NODE_ENV === "production") {

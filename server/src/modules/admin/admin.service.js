@@ -30,6 +30,8 @@ export async function listStudents(filters) {
   if (filters.status) match.status = filters.status;
 
   const profileMatch = {};
+  if (filters.course) profileMatch["profile.course"] = new RegExp(`^${escapeRegex(filters.course)}$`, "i");
+  if (filters.specialization) profileMatch["profile.specialization"] = new RegExp(`^${escapeRegex(filters.specialization)}$`, "i");
   if (filters.branch) profileMatch["profile.branch"] = new RegExp(`^${escapeRegex(filters.branch)}$`, "i");
   if (filters.gradYear !== undefined) profileMatch["profile.gradYear"] = filters.gradYear;
   if (filters.minCgpa !== undefined || filters.maxCgpa !== undefined) {
@@ -43,6 +45,8 @@ export async function listStudents(filters) {
       { name: expression },
       { email: expression },
       { "profile.rollNo": expression },
+      { "profile.course": expression },
+      { "profile.specialization": expression },
       { "profile.branch": expression },
       { "profile.skills": expression },
     ];
@@ -76,8 +80,11 @@ export async function listStudents(filters) {
               profile: {
                 id: "$profile._id",
                 rollNo: "$profile.rollNo",
+                course: "$profile.course",
+                specialization: "$profile.specialization",
                 branch: "$profile.branch",
                 cgpa: "$profile.cgpa",
+                cgpaSemester: "$profile.cgpaSemester",
                 gradYear: "$profile.gradYear",
                 backlogs: "$profile.backlogs",
                 phone: "$profile.phone",
@@ -120,7 +127,7 @@ export async function updateStudent(studentId, input, actor, ip = null) {
       if (input.status !== undefined) account.status = input.status;
       await account.save({ session });
 
-      const profileFields = ["rollNo", "branch", "cgpa", "gradYear", "backlogs", "phone", "skills"];
+      const profileFields = ["rollNo", "course", "specialization", "branch", "cgpa", "cgpaSemester", "gradYear", "backlogs", "phone", "skills"];
       for (const field of profileFields) {
         if (input[field] !== undefined) profile[field] = input[field];
       }

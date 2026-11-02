@@ -10,6 +10,7 @@ const salaryRangeSchema = new Schema({
 }, { _id: false });
 
 const eligibilitySchema = new Schema({
+  courses: { type: [String], default: [] },
   branches: { type: [String], default: [] },
   minCgpa: { type: Number, min: 0, max: 10, default: null },
   gradYear: { type: Number, min: 1900, max: 2200, default: null },

@@ -16,6 +16,7 @@ const salaryRangeSchema = z.object({
 );
 
 const eligibilitySchema = z.object({
+  courses: z.array(z.string().trim().min(1).max(80)).max(30).default([]),
   branches: z.array(z.string().trim().min(1).max(80)).max(30).default([]),
   minCgpa: z.number().min(0).max(10).nullable().default(null),
   gradYear: z.number().int().min(1900).max(2200).nullable().default(null),

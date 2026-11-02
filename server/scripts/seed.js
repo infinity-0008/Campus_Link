@@ -48,9 +48,45 @@ const studentNames = [
   "Riya Chawla", "Aarav Kulkarni", "Simran Gill", "Dhruv Shah", "Anvi Bose",
 ];
 
-const branchCycle = ["CSE", "IT", "ECE", "MECH"];
+const studentCourses = [
+  "B.Tech", "B.Tech", "B.Tech", "B.Tech", "B.Tech",
+  "B.Tech", "B.Tech", "B.Tech", "B.Tech", "B.Tech",
+  "B.Tech", "B.Tech", "B.Tech", "B.Tech", "B.Tech",
+  "BCA", "BCA", "BCA",
+  "MCA", "MCA",
+  "MBA", "MBA", "MBA",
+  "M.Tech", "M.Sc"
+];
+
+const studentSpecializations = [
+  "Computer Science & Engineering", "Information Technology", "Electronics & Communication Engineering", "Mechanical Engineering", "Information Technology",
+  "Computer Science & Engineering", "Artificial Intelligence & Data Science", "Electronics & Communication Engineering", "Mechanical Engineering", "Computer Science & Engineering",
+  "Civil Engineering", "Computer Science & Engineering", "Information Technology", "Electronics & Communication Engineering", "Computer Science & Engineering",
+  "Data Science & Analytics", "Cloud Computing & DevOps", "Web & Mobile App Development",
+  "Software Engineering", "AI & Machine Learning",
+  "Finance & Investment Banking", "Marketing & Brand Management", "Business Analytics & Data Science",
+  "Computer Science & Engineering", "Data Science & Big Data"
+];
+
+const studentBranches = [
+  "CSE", "IT", "ECE", "MECH", "IT",
+  "CSE", "AI & DS", "ECE", "MECH", "CSE",
+  "CIVIL", "CSE", "IT", "ECE", "CSE",
+  "Data Science", "Cloud Computing", "Web & Mobile",
+  "Software Engineering", "AI & ML",
+  "Finance", "Marketing", "Business Analytics",
+  "CSE", "Data Science"
+];
+
 const cgpaValues = [8.8, 7.5, 9.1, 6.8, 8.0, 7.2, 8.6, 6.4, 9.3, 7.9, 6.2, 8.4, 7.6, 9.0, 7.1, 8.2, 6.5, 9.4, 7.8, 8.7, 6.9, 7.3, 8.9, 7.7, 8.1];
-const cgpaSemesters = [7, 5, 7, 3, 5, 7, 5, 3, 7, 5, 3, 7, 5, 7, 3, 5, 7, 3, 5, 7, 3, 5, 7, 3, 5];
+// Semesters constrained by program duration: B.Tech max 8, BCA max 6, MCA/MBA/M.Tech/M.Sc max 4
+const cgpaSemesters = [
+  7, 5, 7, 3, 5, 7, 5, 3, 7, 5, 3, 7, 5, 7, 3,
+  5, 3, 5,
+  3, 3,
+  3, 3, 3,
+  3, 3
+];
 const graduationYears = [2026, 2027, 2026, 2028, 2027, 2026, 2027, 2028, 2026, 2027, 2028, 2026, 2027, 2026, 2028, 2027, 2026, 2028, 2027, 2026, 2028, 2027, 2026, 2028, 2027];
 const backlogValues = [0, 0, 0, 1, 0, 0, 1, 2, 0, 0, 2, 0, 1, 0, 1, 0, 2, 0, 0, 1, 0, 1, 0, 2, 0];
 
@@ -97,43 +133,43 @@ const jobSpecs = [
     recruiterIndex: 0, company: "TechCorp Solutions", title: "Graduate Software Engineer",
     description: "Build and maintain web services and user-facing applications. Work with JavaScript, React, Node.js, REST APIs, MongoDB, testing and Git in a collaborative engineering team.",
     location: "Bengaluru, India", type: "full_time", requiredSkills: ["JavaScript", "React", "Node.js", "REST APIs", "MongoDB"],
-    eligibility: { branches: ["CSE", "IT"], minCgpa: 6.5, gradYear: 2026, maxBacklogs: 1 }, status: JOB_STATUSES.OPEN, salaryRange: { min: 800000, max: 1200000, currency: "INR" }, deadlineDays: 30, driveDays: 45,
+    eligibility: { courses: ["B.Tech", "MCA", "BCA"], branches: ["CSE", "IT", "Software Engineering"], minCgpa: 6.5, gradYear: 2026, maxBacklogs: 1 }, status: JOB_STATUSES.OPEN, salaryRange: { min: 800000, max: 1200000, currency: "INR" }, deadlineDays: 30, driveDays: 45,
   },
   {
     recruiterIndex: 1, company: "Vertex Labs", title: "Data Analyst Intern",
     description: "Analyze operational datasets, write SQL queries, clean data with Python and Pandas, apply statistical methods and communicate results through Tableau dashboards.",
     location: "Pune, India", type: "internship", requiredSkills: ["Python", "SQL", "Pandas", "Statistics", "Tableau"],
-    eligibility: { branches: [], minCgpa: 6.0, gradYear: 2027, maxBacklogs: 2 }, status: JOB_STATUSES.OPEN, salaryRange: { min: 20000, max: 35000, currency: "INR" }, deadlineDays: 24, driveDays: 38,
+    eligibility: { courses: ["B.Tech", "BCA", "MCA", "MBA", "B.Sc", "M.Sc"], branches: [], minCgpa: 6.0, gradYear: 2027, maxBacklogs: 2 }, status: JOB_STATUSES.OPEN, salaryRange: { min: 20000, max: 35000, currency: "INR" }, deadlineDays: 24, driveDays: 38,
   },
   {
     recruiterIndex: 2, company: "Orbit Data Systems", title: "Frontend Developer",
     description: "Create accessible responsive web interfaces using HTML, CSS and JavaScript. Build reusable React components, translate Figma designs and integrate REST APIs.",
     location: "Hyderabad, India", type: "full_time", requiredSkills: ["HTML", "CSS", "JavaScript", "React", "Accessibility"],
-    eligibility: { branches: ["CSE", "IT"], minCgpa: 6.0, gradYear: null, maxBacklogs: 2 }, status: JOB_STATUSES.OPEN, salaryRange: { min: 650000, max: 950000, currency: "INR" }, deadlineDays: 28, driveDays: 42,
+    eligibility: { courses: ["B.Tech", "BCA", "MCA"], branches: ["CSE", "IT", "Web & Mobile", "Software Engineering"], minCgpa: 6.0, gradYear: null, maxBacklogs: 2 }, status: JOB_STATUSES.OPEN, salaryRange: { min: 650000, max: 950000, currency: "INR" }, deadlineDays: 28, driveDays: 42,
   },
   {
     recruiterIndex: 0, company: "TechCorp Solutions", title: "AI / Machine Learning Intern",
     description: "Experiment with machine learning models, prepare datasets, evaluate classifiers and document model performance using Python, TensorFlow and data analysis techniques.",
     location: "Remote, India", type: "internship", requiredSkills: ["Python", "Machine Learning", "TensorFlow", "Data Analysis", "SQL"],
-    eligibility: { branches: ["CSE", "IT", "ECE"], minCgpa: 7.0, gradYear: null, maxBacklogs: 0 }, status: JOB_STATUSES.OPEN, salaryRange: { min: 25000, max: 40000, currency: "INR" }, deadlineDays: 20, driveDays: 35,
+    eligibility: { courses: ["B.Tech", "M.Tech", "MCA", "M.Sc"], branches: ["CSE", "IT", "ECE", "AI & ML", "Data Science"], minCgpa: 7.0, gradYear: null, maxBacklogs: 0 }, status: JOB_STATUSES.OPEN, salaryRange: { min: 25000, max: 40000, currency: "INR" }, deadlineDays: 20, driveDays: 35,
   },
   {
     recruiterIndex: 1, company: "Vertex Labs", title: "Backend Developer",
     description: "Design secure backend APIs with Node.js and Express, persist application data in MongoDB, validate requests, use Git and write integration tests for REST APIs.",
     location: "Noida, India", type: "full_time", requiredSkills: ["Node.js", "Express", "MongoDB", "REST APIs", "Git"],
-    eligibility: { branches: ["CSE", "IT"], minCgpa: 6.0, gradYear: null, maxBacklogs: 2 }, status: JOB_STATUSES.OPEN, salaryRange: { min: 700000, max: 1100000, currency: "INR" }, deadlineDays: 32, driveDays: 48,
+    eligibility: { courses: ["B.Tech", "BCA", "MCA"], branches: ["CSE", "IT", "Software Engineering"], minCgpa: 6.0, gradYear: null, maxBacklogs: 2 }, status: JOB_STATUSES.OPEN, salaryRange: { min: 700000, max: 1100000, currency: "INR" }, deadlineDays: 32, driveDays: 48,
   },
   {
     recruiterIndex: 2, company: "Orbit Data Systems", title: "Product Analytics Associate",
     description: "Support product decisions with SQL, spreadsheets, business analysis, KPI reporting and clear written communication.",
     location: "Mumbai, India", type: "full_time", requiredSkills: ["SQL", "Excel", "Analytics", "Communication"],
-    eligibility: { branches: [], minCgpa: 6.0, gradYear: 2027, maxBacklogs: 2 }, status: JOB_STATUSES.DRAFT, salaryRange: { min: 600000, max: 850000, currency: "INR" }, deadlineDays: 50, driveDays: 65,
+    eligibility: { courses: ["MBA", "BBA", "B.Tech", "BCA"], branches: ["Finance", "Marketing", "Business Analytics", "Operations"], minCgpa: 6.0, gradYear: 2027, maxBacklogs: 2 }, status: JOB_STATUSES.DRAFT, salaryRange: { min: 600000, max: 850000, currency: "INR" }, deadlineDays: 50, driveDays: 65,
   },
   {
     recruiterIndex: 0, company: "TechCorp Solutions", title: "Cloud Engineering Intern",
     description: "Learn cloud infrastructure, containerization and continuous integration. Work with AWS, Docker, Linux and CI/CD pipelines under mentor guidance.",
     location: "Bengaluru, India", type: "internship", requiredSkills: ["AWS", "Docker", "Linux", "CI/CD"],
-    eligibility: { branches: ["CSE", "IT", "ECE"], minCgpa: 6.5, gradYear: 2027, maxBacklogs: 1 }, status: JOB_STATUSES.DRAFT, salaryRange: { min: 22000, max: 32000, currency: "INR" }, deadlineDays: 60, driveDays: 75,
+    eligibility: { courses: ["B.Tech", "BCA", "MCA"], branches: ["CSE", "IT", "ECE", "Cloud Computing", "Cloud Technologies"], minCgpa: 6.5, gradYear: 2027, maxBacklogs: 1 }, status: JOB_STATUSES.DRAFT, salaryRange: { min: 22000, max: 32000, currency: "INR" }, deadlineDays: 60, driveDays: 75,
   },
   {
     recruiterIndex: 1, company: "Vertex Labs", title: "QA Automation Trainee",
@@ -250,7 +286,9 @@ async function createStudentProfiles(students) {
     const profileData = {
       user: user._id,
       rollNo: `CL${String(2026 + (index % 2)).slice(-2)}${String(index + 1).padStart(4, "0")}`,
-      branch: branchCycle[index % branchCycle.length],
+      course: studentCourses[index],
+      specialization: studentSpecializations[index],
+      branch: studentBranches[index],
       cgpa: cgpaValues[index],
       cgpaSemester: cgpaSemesters[index],
       gradYear: graduationYears[index],

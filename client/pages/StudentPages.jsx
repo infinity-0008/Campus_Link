@@ -12,6 +12,7 @@ import { notificationsApi } from "@/api/notifications.api.js";
 import { useAuth } from "@/features/auth/AuthContext.jsx";
 import { formatDate, formatDateTime, money, humanize, getErrorMessage, saveBlob, getId } from "@/lib/format.js";
 import { Button, Card, PageHeader, Field, SelectField, TextAreaField, StatusBadge, StatCard, LoadingState, EmptyState, ErrorState, Pagination, Modal, Table } from "@/components/ui/index.jsx";
+import { COURSES, getCourseById, getMaxSemesters, getSpecializations } from "@/lib/courses.js";
 
 export function StudentDashboard(){
  const {user}=useAuth();
@@ -30,6 +31,8 @@ function AcademicReportView({ profile, user, onEdit }) {
   const isDistinction = numCgpa >= 8.5;
   const isFirstClass = numCgpa >= 7.0 && numCgpa < 8.5;
   const isEligibleGeneral = numCgpa >= 6.0 && Number(profile?.backlogs || 0) === 0;
+  const courseInfo = getCourseById(profile?.course || "btech");
+  const maxSemesters = courseInfo?.maxSemesters || 8;
 
   return (
     <div className="space-y-6">
@@ -77,16 +80,21 @@ function AcademicReportView({ profile, user, onEdit }) {
               </span>
               {profile?.cgpaSemester && (
                 <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-700 ring-1 ring-inset ring-slate-200">
-                  Through Sem {profile.cgpaSemester}
+                  Through Sem {profile.cgpaSemester} of {maxSemesters}
                 </span>
               )}
             </div>
           </div>
 
           <div className="p-4 sm:p-5">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#777a82]">Department / Branch</span>
-            <div className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#17181b]">{profile?.branch || "—"}</div>
-            <p className="mt-2 text-[11px] font-medium text-[#777a82]">Engineering & Technology</p>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#777a82]">Degree & Specialization</span>
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-2xl sm:text-3xl font-extrabold text-[#17181b]">{profile?.course || "B.Tech"}</span>
+              <span className="text-xs font-semibold text-brand-red bg-red-50 px-2 py-0.5 rounded-full">{profile?.branch || profile?.specialization || "General"}</span>
+            </div>
+            <p className="mt-2 text-[11px] font-medium text-[#777a82] truncate" title={profile?.specialization || profile?.branch || ""}>
+              {profile?.specialization || (courseInfo ? `${courseInfo.fullName}` : "Degree Program")}
+            </p>
           </div>
 
           <div className="p-4 sm:p-5">
@@ -119,8 +127,12 @@ function AcademicReportView({ profile, user, onEdit }) {
                 <span className="font-semibold text-[#1f2024] text-sm mt-0.5 block">{profile?.phone || "Not specified"}</span>
               </div>
               <div>
+                <span className="text-[#888a90] block">Degree Program</span>
+                <span className="font-semibold text-[#1f2024] text-sm mt-0.5 block">{profile?.course || "B.Tech"} · {profile?.specialization || profile?.branch || "General"}</span>
+              </div>
+              <div>
                 <span className="text-[#888a90] block">CGPA Evaluation Scope</span>
-                <span className="font-semibold text-[#1f2024] text-sm mt-0.5 block">{profile?.cgpaSemester ? `Calculated through Semester ${profile.cgpaSemester}` : "All Completed Terms"}</span>
+                <span className="font-semibold text-[#1f2024] text-sm mt-0.5 block">{profile?.cgpaSemester ? `Calculated through Semester ${profile.cgpaSemester} of ${maxSemesters}` : "All Completed Terms"}</span>
               </div>
               <div>
                 <span className="text-[#888a90] block">Placement Standing</span>
@@ -232,9 +244,13 @@ export function StudentProfilePage() {
   const { user } = useAuth();
   const q = useQuery({ queryKey: ["student", "profile"], queryFn: studentsApi.me });
   const [isEditing, setIsEditing] = useState(false);
-  const { register, control, handleSubmit, reset, formState: { errors, isDirty, isSubmitting } } = useForm({
-    defaultValues: { rollNo: "", branch: "", cgpa: "", cgpaSemester: "", gradYear: "", backlogs: 0, phone: "", skillsText: "", projects: [], experience: [] }
+  const { register, control, handleSubmit, reset, watch, setValue, formState: { errors, isDirty, isSubmitting } } = useForm({
+    defaultValues: { rollNo: "", course: "B.Tech", specialization: "", branch: "", cgpa: "", cgpaSemester: "", gradYear: "", backlogs: 0, phone: "", skillsText: "", projects: [], experience: [] }
   });
+  const selectedCourse = watch("course") || "B.Tech";
+  const activeCourseInfo = getCourseById(selectedCourse);
+  const maxAllowedSemesters = activeCourseInfo?.maxSemesters || 8;
+  const courseSpecs = activeCourseInfo?.specializations || [];
   const projects = useFieldArray({ control, name: "projects" });
   const experience = useFieldArray({ control, name: "experience" });
 
@@ -242,6 +258,8 @@ export function StudentProfilePage() {
     if (q.data) {
       reset({
         rollNo: q.data.rollNo || "",
+        course: q.data.course || "B.Tech",
+        specialization: q.data.specialization || q.data.branch || "",
         branch: q.data.branch || "",
         cgpa: q.data.cgpa ?? "",
         cgpaSemester: q.data.cgpaSemester ?? "",
@@ -274,7 +292,9 @@ export function StudentProfilePage() {
     }
     const payload = {
       rollNo: values.rollNo || null,
-      branch: values.branch || null,
+      course: values.course || null,
+      specialization: values.specialization || null,
+      branch: values.branch || values.specialization || null,
       cgpa: values.cgpa === "" ? null : Number(values.cgpa),
       cgpaSemester: values.cgpaSemester === "" || values.cgpaSemester == null ? null : Number(values.cgpaSemester),
       gradYear: values.gradYear === "" ? null : Number(values.gradYear),
@@ -375,7 +395,41 @@ export function StudentProfilePage() {
             </div>
             <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <Field label="Roll / registration number" {...register("rollNo")} />
-              <Field label="Branch" placeholder="e.g. CSE" {...register("branch")} />
+              <SelectField
+                label="Degree / Course"
+                {...register("course", {
+                  onChange: (e) => {
+                    const c = getCourseById(e.target.value);
+                    if (c && c.specializations.length > 0) {
+                      setValue("specialization", c.specializations[0].name);
+                      setValue("branch", c.specializations[0].id);
+                    }
+                  }
+                })}
+              >
+                {COURSES.map((c) => (
+                  <option key={c.id} value={c.name}>
+                    {c.name} — {c.fullName} ({c.level})
+                  </option>
+                ))}
+              </SelectField>
+              <SelectField
+                label="Specialization"
+                {...register("specialization", {
+                  onChange: (e) => {
+                    const match = courseSpecs.find(s => s.name === e.target.value);
+                    setValue("branch", match ? match.id : e.target.value);
+                  }
+                })}
+              >
+                <option value="">Select specialization</option>
+                {courseSpecs.map((s) => (
+                  <option key={s.id} value={s.name}>
+                    {s.name} ({s.id})
+                  </option>
+                ))}
+              </SelectField>
+              <Field label="Branch / Short Code" placeholder="e.g. CSE, IT, Finance" {...register("branch")} />
               <Field
                 label="CGPA"
                 type="number"
@@ -391,7 +445,19 @@ export function StudentProfilePage() {
                 })}
                 error={errors.cgpa?.message}
               />
-              <Field label="Graded up to semester" type="number" min="1" max="12" placeholder="e.g. 6 or 7" {...register("cgpaSemester")} />
+              <div>
+                <Field
+                  label="Graded up to semester"
+                  type="number"
+                  min="1"
+                  max={maxAllowedSemesters}
+                  placeholder={`1 to ${maxAllowedSemesters}`}
+                  {...register("cgpaSemester")}
+                />
+                <span className="mt-1 block text-[11px] text-[#777a82]">
+                  Max {maxAllowedSemesters} semesters for {selectedCourse} ({activeCourseInfo?.durationYears || 4} Years)
+                </span>
+              </div>
               <Field label="Graduation year" type="number" {...register("gradYear")} />
               <Field label="Backlogs" type="number" min="0" {...register("backlogs")} />
               <Field label="Phone" type="tel" {...register("phone")} />

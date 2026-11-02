@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { getMaxSemesters } from "../../config/courses.js";
 
 const nullableText = (maximum) => z.string().trim().max(maximum).nullable().optional();
 const projectSchema = z.object({
@@ -20,6 +21,8 @@ const experienceSchema = z.object({
 export const updateStudentProfileSchema = z.object({
   body: z.object({
     rollNo: nullableText(40),
+    course: nullableText(80),
+    specialization: nullableText(120),
     branch: nullableText(80),
     cgpa: z.number().min(0).max(10).nullable().optional(),
     cgpaSemester: z.number().int().min(1).max(12).nullable().optional(),
@@ -29,7 +32,21 @@ export const updateStudentProfileSchema = z.object({
     skills: z.array(z.string().trim().min(1).max(80)).max(100).optional(),
     projects: z.array(projectSchema).max(50).optional(),
     experience: z.array(experienceSchema).max(50).optional(),
-  }).strict().refine((body) => Object.keys(body).length > 0, {
-    message: "Provide at least one profile field to update.",
-  }),
+  }).strict()
+    .refine((body) => Object.keys(body).length > 0, {
+      message: "Provide at least one profile field to update.",
+    })
+    .refine(
+      (body) => {
+        if (body.cgpaSemester && body.course) {
+          const max = getMaxSemesters(body.course);
+          return body.cgpaSemester <= max;
+        }
+        return true;
+      },
+      {
+        message: "Evaluated semester exceeds the maximum semesters allowed for the selected course.",
+        path: ["cgpaSemester"],
+      }
+    ),
 });

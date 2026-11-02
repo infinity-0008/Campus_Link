@@ -89,6 +89,8 @@ const studentProfileSchema = new Schema({
     unique: true,
   },
   rollNo: { type: String, trim: true, default: null },
+  course: { type: String, trim: true, default: null },
+  specialization: { type: String, trim: true, default: null },
   branch: { type: String, trim: true, default: null },
   cgpa: { type: Number, min: 0, max: 10, default: null },
   cgpaSemester: { type: Number, min: 1, max: 12, default: null },
@@ -104,6 +106,8 @@ const studentProfileSchema = new Schema({
 }, { timestamps: true });
 
 studentProfileSchema.index({ branch: 1 });
+studentProfileSchema.index({ course: 1 });
+studentProfileSchema.index({ specialization: 1 });
 studentProfileSchema.index({ cgpa: 1 });
 studentProfileSchema.index({ gradYear: 1 });
 
