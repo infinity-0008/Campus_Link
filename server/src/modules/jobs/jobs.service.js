@@ -60,13 +60,24 @@ function addTextSearch(conditions, value, fields) {
 }
 
 function studentEligibilityQuery(profile, now) {
-  const conditions = [{
-    $or: [
-      { "eligibility.branches": { $exists: false } },
-      { "eligibility.branches": { $size: 0 } },
-      ...(profile.branch ? [{ "eligibility.branches": new RegExp(`^${escapeRegex(profile.branch)}$`, "i") }] : []),
-    ],
-  }];
+  const branchConditions = [
+    { "eligibility.branches": { $exists: false } },
+    { "eligibility.branches": { $size: 0 } },
+    ...(profile.branch ? [{ "eligibility.branches": new RegExp(`^${escapeRegex(profile.branch)}$`, "i") }] : []),
+    ...(profile.specialization ? [{ "eligibility.branches": new RegExp(`^${escapeRegex(profile.specialization)}$`, "i") }] : []),
+  ];
+
+  const conditions = [{ $or: branchConditions }];
+
+  if (profile.course) {
+    conditions.push({
+      $or: [
+        { "eligibility.courses": { $exists: false } },
+        { "eligibility.courses": { $size: 0 } },
+        { "eligibility.courses": new RegExp(`^${escapeRegex(profile.course)}$`, "i") },
+      ],
+    });
+  }
 
   if (profile.cgpa === null || profile.cgpa === undefined) {
     conditions.push({ $or: [{ "eligibility.minCgpa": null }, { "eligibility.minCgpa": { $exists: false } }] });
